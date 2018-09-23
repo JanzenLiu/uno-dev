@@ -411,12 +411,27 @@ class Player(object):
             current_type.name,
             current_to_draw
         )))
-        return [(i, card) for i, card in enumerate(self.cards)
-                if check_card_playable(card,
-                                       current_color,
-                                       current_value,
-                                       current_type,
-                                       current_to_draw)]
+        playable_cards = [(i, card) for i, card in enumerate(self.cards)
+                         if check_card_playable(card,
+                                               current_color,
+                                               current_value,
+                                               current_type,
+                                               current_to_draw)]
+        # If playable_cards include no NumberCard or WeakActionCard, all cards are playable
+        # If playable_cards include NumberCard or (and) WeakActionCard, DrawFourCard needs to be removed
+        matching_card_indices = []
+        draw_four_indices = []
+        for (idx, (i, card)) in enumerate(playable_cards):
+            if card.is_number() or card.is_weak_action():
+                matching_card_indices.append(idx)
+            elif card.is_draw4():
+                draw_four_indices.append(idx)
+
+        if len(matching_card_indices) > 0 and len(draw_four_indices) > 0:
+            for i in sorted(draw_four_indices, reverse=True):
+                del playable_cards[i]
+
+        return playable_cards
 
     # @abstractmethod
     def get_play(self, current_color, current_value, current_type, current_to_draw):
@@ -629,14 +644,14 @@ class StateController(object):
                                    self.current_type,
                                    self.current_to_draw)
 
-    def get_playable(self, cards):
-        assert isinstance(cards, list)
-        return [card for card in cards
-                if check_card_playable(card,
-                                       self.current_color,
-                                       self.current_value,
-                                       self.current_type,
-                                       self.current_to_draw)]
+    # def get_playable(self, cards):
+    #     assert isinstance(cards, list)
+    #     return [card for card in cards
+    #             if check_card_playable(card,
+    #                                    self.current_color,
+    #                                    self.current_value,
+    #                                    self.current_type,
+    #                                    self.current_to_draw)]
 
     def accept_card(self, card, player, flow_controller):
         assert isinstance(card, Card)
