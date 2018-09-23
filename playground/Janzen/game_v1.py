@@ -27,6 +27,12 @@ def colored(content, color='w'):
     return Colormap[color] + content + Style.RESET_ALL
 
 
+def add_label(obj, content):
+    basename = type(obj).__bases__[0].__name__
+    classname = type(obj).__name__ if basename == 'object' else basename
+    return '[{}] {}'.format(classname, content)
+
+
 @unique
 class CardType(Enum):
     ABSTRACT = -1  # just a conceptual type
@@ -380,7 +386,7 @@ class Player(object):
 
     def get_card(self, card):
         assert isinstance(card, Card)
-        print("[Player] {} gets card: {}.".format(self.name, card))
+        print(add_label(self, '{} gets card: {}.'.format(self.name, card)))
         self.cards.append(card)
 
     def get_cards(self, cards):
@@ -394,17 +400,17 @@ class Player(object):
     def play_card(self, index):
         assert 0 <= index < self.num_cards
         card = self.cards.pop(index)
-        print("[Player] {} plays {}.".format(self.name, card))
+        print(add_label(self, '{} plays {}.'.format(self.name, card)))
         return card
 
     def get_playable(self, current_color, current_value, current_type, current_to_draw):
-        print("[Player] {} is looking for possible play under ({}, {}, {}, {})".format(
+        print(add_label(self, '{} is looking for possible play under ({}, {}, type {}, to draw {})'.format(
             self.name,
             current_color.name,
             current_value,
             current_type.name,
             current_to_draw
-        ))
+        )))
         return [(i, card) for i, card in enumerate(self.cards)
                 if check_card_playable(card,
                                        current_color,
@@ -420,10 +426,10 @@ class Player(object):
         return self.num_cards == 0
 
     def __repr__(self):
-        return "Player({}, \"{}\", {}, {})".format(self.type.name, self.name, self.idx, self.cards)
+        return "Player({}, \"{}\", pos {}, {})".format(self.type.name, self.name, self.idx, self.cards)
 
     def __str__(self):
-        return "Player({}, \"{}\", {}, {})".format(self.type.name, self.name, self.idx, self.cards)
+        return "Player({}, \"{}\", pos {}, {})".format(self.type.name, self.name, self.idx, self.cards)
 
 
 # In[6]:
@@ -437,11 +443,11 @@ class PCNaivePlayer(Player):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
 
         if len(plays) == 0:
-            print("[Player] {} has no valid plays.".format(self.name))
+            print(add_label(self, '{} has no valid plays.'.format(self.name)))
             return None
         else:
-            print("[Player] {}'s possible plays: {}.".format(self.name, plays))
-            print("[Player] {} chooses to play: {}".format(self.name, plays[0]))
+            print(add_label(self, '{}\'s possible plays: {}.'.format(self.name, plays)))
+            print(add_label(self, '{} chooses to play: {}'.format(self.name, plays[0])))
             return plays[0]
 
 
@@ -483,12 +489,12 @@ class HumanPlayer(Player):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
 
         if len(plays) == 0:
-            print("[Player] {} has no valid plays.".format(self.name))
+            print(add_label(self, '{} has no valid plays.'.format(self.name)))
             return None
         else:
-            print("[Player] {}'s possible plays: {}.".format(self.name, plays))
+            print(add_label(self, '{}\'s possible plays: {}.'.format(self.name, plays)))
             play = HumanPlayer.get_play_input(plays)
-            print("[Player] {} chooses to play: {}.".format(self.name, play))
+            print(add_label(self, '{} chooses to play: {}'.format(self.name, play)))
             return play
 
 
@@ -543,24 +549,23 @@ class DeckController(object):
         return len(self.used_pile)
 
     def shuffle(self):
-        print("[DeckController] Shuffling draw pile...")
+        print(add_label(self, 'Shuffling draw pile...'))
         random.shuffle(self.draw_pile)
 
     def regenerate_draw_pile(self):
-        print("[DeckController] Regenerating draw pile...")
+        print(add_label(self, 'Regenerating draw pile...'))
         self.draw_pile = self.used_pile
         self.used_pile = []
-        print("[DeckController] {} cards in the draw pile now.".format(self.draw_pile_size))
+        print(add_label(self, '{} cards in the draw pile now.'.format(self.draw_pile_size)))
 
     def draw_card(self):
         # TODO: to consider the case that both draw_pile and used_pile is empty
         assert self.draw_pile_size > 0
 
         # get top card and remove it from the data structure
-        print("[DeckController] Drawing card...")
+        print(add_label(self, 'Drawing card...'))
         card = self.draw_pile.pop(0)
-        print("[DeckController] {} drawn.".format(card))
-        print("[DeckController] {} cards left in the draw pile.".format(self.draw_pile_size))
+        print(add_label(self, '{} drawn. Draw pile: {} cards'.format(card, self.draw_pile_size)))
 
         # regenerate draw pile and shuffle if no cards left after this draw
         if self.draw_pile_size == 0:
@@ -578,9 +583,8 @@ class DeckController(object):
 
     def discard_card(self, card):
         assert isinstance(card, Card)
-        print("[DeckController] {} goes into the discard pile".format(card))
         self.used_pile.append(card)
-        print("[DeckController] {} cards in the discard pile.".format(self.used_pile_size))
+        print(add_label(self, '{} discarded. Discard pile: {} cards'.format(card, self.used_pile_size)))
 
     def discard_cards(self, cards):
         assert isinstance(cards, list)
@@ -659,7 +663,7 @@ class StateController(object):
                 new_color = get_color_input()
             else:
                 new_color = CardColor(random.randint(1, 4))  # TODO: to enhance
-            print("[StateController] Player {} selects color {}".format(player.name, new_color.name))
+            print(add_label(self, 'Player {} selects color {}'.format(player.name, colored(new_color.name, new_color.name[0]))))
 
         elif card.is_draw2():
             assert self.current_to_draw == 0 or self.current_type == CardType.DRAW_2
@@ -671,7 +675,7 @@ class StateController(object):
             else:
                 new_color = CardColor(random.randint(1, 4))  # TODO: to enhance
             new_to_draw = self.current_to_draw + 4
-            print("[StateController] Player {} selects color {}".format(player.name, new_color.name))
+            print(add_label(self, 'Player {} selects color {}'.format(player.name, colored(new_color.name, new_color.name[0]))))
 
         else:
             # raise Error
@@ -770,20 +774,20 @@ class ActionController(object):
             card = self.give_player_card(player)
             if self.state_controller.check_card_playable(card):
                 # TODO: to make this play optional
-                print("[ActionController] The new card is playable, so play it immediately")
+                print(add_label(self, 'The new card is playable, so play it immediately'))
                 self.player_play_card(player, (player.num_cards - 1, card))
 
     def draw_initial_card(self):
-        print("[ActionController] Drawing initial card...")
+        print(add_label(self, 'Drawing initial card...'))
         card = self.deck_controller.draw_card()
         assert isinstance(card, Card)
 
         while card.is_draw4():
-            print("[ActionController] Oops, It's a Draw4 Card, Let's Try Again")
+            print(add_label(self, 'Oops, It\'s a Draw4 Card, Let\'s Try Again'))
             card = self.deck_controller.draw_card()
             assert isinstance(card, Card)
 
-        print("[ActionController] {} drawed as the initial card.".format(card))
+        print(add_label(self, '{} drawed as the initial card.'.format(card)))
         if card.is_number():
             # set current color and number
             assert isinstance(card, NumberCard)
@@ -827,7 +831,7 @@ class ActionController(object):
         self.state_controller.set_type(card.card_type)
 
     def distribute_first_hand(self):
-        print("[ActionController] Distributing first hand cards...")
+        print(add_label(self, 'Distributing first hand cards...'))
         for _ in range(self.num_first_hand):
             for player in self.players:
                 self.give_player_card(player)
@@ -860,7 +864,7 @@ class ActionController(object):
         while not self.flow_controller.is_player_done():
             self.flow_controller.to_next_player()
             player = self.flow_controller.current_player
-            print("[ActionController] Switch to {}".format(player))
+            print(add_label(self, 'Switch to {}'.format(player)))
 
             play = player.get_play(
                 self.state_controller.current_color,
@@ -871,19 +875,19 @@ class ActionController(object):
             if play is not None:
                 self.player_play_card(player, play)
             else:
-                print("[ActionController] {} plays no card.".format(player.name))
+                print(add_label(self, '{} plays no card.'.format(player.name)))
                 self.apply_penalty(player)
 
         assert isinstance(player, Player)
-        print("[ActionController] {} wins in this round.".format(player.name))
-        print("[ActionController] Calculaing scores.")
+        print(add_label(self, '{} wins in this round.'.format(player.name)))
+        print(add_label(self, 'Calculaing scores.'))
         for player in self.players:
             player.count_score()
 
-        print("[ActionController] Present cumulative score for each player")
+        print(add_label(self, 'Present cumulative scores for each player'))
         print("-----------------------------------------------------------")
-        for player in self.players:
-            print("{}: {}".format(player.name, player.cumulative_score))
+        for index, player in enumerate(self.players):
+            print("pos {} - name {}: {}".format(index, player.name, player.cumulative_score))
 
 
 # In[13]:
@@ -953,7 +957,7 @@ class Game(object):
         # Get Number of Players
         # =====================
         self.num_players = Game.get_num_players()
-        print("[Game] Number of Player Set: {}\n".format(self.num_players))
+        print(add_label(self, 'Number of Player Set: {}\n'.format(self.num_players)))
 
         # ===============
         # Get Player Info
@@ -970,7 +974,7 @@ class Game(object):
                 raise Exception("Unknown Player Type Encountered while Creating Player")
 
             self.players.append(player)
-            print("[Game] Player Created: {}\n".format(player))
+            print(add_label(self, 'Player created: {}\n'.format(player)))
 
         # =====================================
         # Initialize Cards and ActionController
@@ -983,7 +987,7 @@ class Game(object):
         # ====
         self.action_controller.run()
 
-        print("[Game] Game over.")
+        print(add_label(self, 'Game over.'))
 
 
 # In[14]:
