@@ -7,6 +7,24 @@
 from enum import Enum, unique
 import itertools
 import random
+from colorama import init
+from colorama import Fore, Back, Style
+
+init()
+
+
+# TODO: put into OutputController
+Colormap = {
+    'r': Fore.RED,
+    'g': Fore.GREEN,
+    'b': Fore.BLUE,
+    'y': Fore.YELLOW,
+    'w': Fore.BLACK + Back.WHITE,
+}
+def colored(content, color='w'):
+    color = color.lower()
+    assert color in list(Colormap.keys())
+    return Colormap[color] + content + Style.RESET_ALL
 
 
 @unique
@@ -36,6 +54,15 @@ class Card(object):
     def __init__(self, card_type, color):
         self.card_type = card_type
         self.color = color
+
+    def __repr__(self):
+        if self.is_number():
+            return colored("{}({}, {})".format(type(self).__name__, self.color.name, self.num), self.color.name[0])
+        elif self.is_weak_action():
+            return colored("{}({})".format(type(self).__name__, self.color.name), self.color.name[0])
+        else:
+            return colored("{}()".format(type(self).__name__))
+
 
     # =============
     # Type Checkers
@@ -83,9 +110,6 @@ class NumberCard(Card):
         super().__init__(CardType.NUMBER, color)
         self.num = num
 
-    def __repr__(self):
-        return "NumberCard({}, {})".format(self.color.name, self.num)
-
 
 class WeakActionCard(Card):
     def __init__(self, card_type, color):
@@ -99,24 +123,15 @@ class ReverseCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.REVERSE, color)
 
-    def __repr__(self):
-        return "ReverseCard({})".format(self.color.name)
-
 
 class SkipCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.SKIP, color)
 
-    def __repr__(self):
-        return "SkipCard({})".format(self.color.name)
-
 
 class DrawTwoCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.DRAW_2, color)
-
-    def __repr__(self):
-        return "DrawTwoCard({})".format(self.color.name)
 
 
 class StrongActionCard(Card):
@@ -130,16 +145,10 @@ class WildCard(StrongActionCard):
     def __init__(self):
         super().__init__(CardType.WILDCARD)
 
-    def __repr__(self):
-        return "WildCard()"
-
 
 class DrawFourCard(StrongActionCard):
     def __init__(self):
         super().__init__(CardType.DRAW_4)
-
-    def __repr__(self):
-        return "DrawFourCard()"
 
 
 color_input_msg = "Please Select Color, Input One Number from 1 to 4:\n1)RED 2)GREEN 3)BLUE 4)YELLOW"
@@ -326,7 +335,7 @@ class PlayerType(Enum):
     HUMAN = 1
     PC_NAIVE = 2
 
-    
+
 class Player(object):
     def __init__(self, ptype, name, idx):
         assert isinstance(ptype, PlayerType)
@@ -337,11 +346,11 @@ class Player(object):
         self.idx = idx  # add default setting, if not given, set it according to global counter
         self.cards = []
         self.cumulative_score = 0
-    
+
     @property
     def num_cards(self):
         return len(self.cards)
-    
+
     @property
     def score(self):
         score = 0
@@ -362,57 +371,57 @@ class Player(object):
             else:
                 raise Exception("Unknown Card Type Encountered while Calculating Score")
         return score
-                
+
     def count_score(self):
         self.cumulative_score += self.score
 
     def is_human(self):
         return self.type == PlayerType.HUMAN
-        
+
     def get_card(self, card):
         assert isinstance(card, Card)
-        print("[Player] {} gets card: {}.".format(self.name, card.__repr__()))
+        print("[Player] {} gets card: {}.".format(self.name, card))
         self.cards.append(card)
-    
+
     def get_cards(self, cards):
         assert isinstance(cards, list)
         for card in cards:
             self.get_card(card)
-            
+
     def clear_cards(self):
         self.cards = []
-    
+
     def play_card(self, index):
         assert 0 <= index < self.num_cards
         card = self.cards.pop(index)
-        print("[Player] {} plays {}.".format(self.name, card.__repr__()))
+        print("[Player] {} plays {}.".format(self.name, card))
         return card
-    
+
     def get_playable(self, current_color, current_value, current_type, current_to_draw):
         print("[Player] {} is looking for possible play under ({}, {}, {}, {})".format(
-            self.name, 
-            current_color.name, 
-            current_value, 
-            current_type.name, 
+            self.name,
+            current_color.name,
+            current_value,
+            current_type.name,
             current_to_draw
         ))
-        return [(i, card) for i, card in enumerate(self.cards) 
-                if check_card_playable(card, 
-                                       current_color, 
-                                       current_value, 
-                                       current_type, 
+        return [(i, card) for i, card in enumerate(self.cards)
+                if check_card_playable(card,
+                                       current_color,
+                                       current_value,
+                                       current_type,
                                        current_to_draw)]
-    
+
     # @abstractmethod
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         pass
-    
+
     def is_done(self):
         return self.num_cards == 0
-        
+
     def __repr__(self):
         return "Player({}, \"{}\", {}, {})".format(self.type.name, self.name, self.idx, self.cards)
-    
+
     def __str__(self):
         return "Player({}, \"{}\", {}, {})".format(self.type.name, self.name, self.idx, self.cards)
 
@@ -423,10 +432,10 @@ class Player(object):
 class PCNaivePlayer(Player):
     def __init__(self, name, idx):
         super().__init__(PlayerType.PC_NAIVE, name, idx)
-        
+
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
-        
+
         if len(plays) == 0:
             print("[Player] {} has no valid plays.".format(self.name))
             return None
@@ -452,7 +461,7 @@ class HumanPlayer(Player):
         choice_dict = {index: card for index, card in plays}
         choice_set = choice_dict.keys()
         choice_msg = ["-1) Not Play"]
-        choice_msg += ["{}){}".format(index, card.__repr__()) for index, card in plays]
+        choice_msg += ["{}){}".format(index, card) for index, card in plays]
         msg = "{}{}".format(card_input_msg, " ".join(choice_msg))
         while True:
             try:
@@ -469,10 +478,10 @@ class HumanPlayer(Player):
             return None
         else:
             return choice, choice_dict[choice]
-        
+
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
-        
+
         if len(plays) == 0:
             print("[Player] {} has no valid plays.".format(self.name))
             return None
@@ -494,14 +503,14 @@ class Node(object):
         self.next_node = next_node
         self.prev_node = prev_node
         self.data = data
-        
+
     def __repr__(self):
         return "Node({})".format(self.data)
-    
+
     def __str__(self):
         return "Node({})".format(self.data)
-        
-        
+
+
 class LinkedList(object):
     def __init__(self, lst):
         self.first_node = node = Node(data=lst[0])
@@ -528,51 +537,51 @@ class DeckController(object):
     @property
     def draw_pile_size(self):
         return len(self.draw_pile)
-    
+
     @property
     def used_pile_size(self):
         return len(self.used_pile)
-        
+
     def shuffle(self):
         print("[DeckController] Shuffling draw pile...")
         random.shuffle(self.draw_pile)
-    
+
     def regenerate_draw_pile(self):
         print("[DeckController] Regenerating draw pile...")
         self.draw_pile = self.used_pile
         self.used_pile = []
         print("[DeckController] {} cards in the draw pile now.".format(self.draw_pile_size))
-        
+
     def draw_card(self):
         # TODO: to consider the case that both draw_pile and used_pile is empty
-        assert self.draw_pile_size > 0 
-        
+        assert self.draw_pile_size > 0
+
         # get top card and remove it from the data structure
         print("[DeckController] Drawing card...")
         card = self.draw_pile.pop(0)
-        print("[DeckController] {} drawn.".format(card.__repr__()))
+        print("[DeckController] {} drawn.".format(card))
         print("[DeckController] {} cards left in the draw pile.".format(self.draw_pile_size))
-        
+
         # regenerate draw pile and shuffle if no cards left after this draw
         if self.draw_pile_size == 0:
             self.regenerate_draw_pile()
             self.shuffle()
-            
+
         return card
-    
+
     def draw_cards(self, num_cards):
         assert isinstance(num_cards, int) and num_cards >= 1
-        
+
         # repeat calling self.draw_card() for num_cards times
         cards = [self.draw_card() for _ in range(num_cards)]
         return cards
-    
+
     def discard_card(self, card):
         assert isinstance(card, Card)
-        print("[DeckController] {} goes into the discard pile".format(card.__repr__()))
+        print("[DeckController] {} goes into the discard pile".format(card))
         self.used_pile.append(card)
         print("[DeckController] {} cards in the discard pile.".format(self.used_pile_size))
-        
+
     def discard_cards(self, cards):
         assert isinstance(cards, list)
         for card in cards:
@@ -589,42 +598,42 @@ class StateController(object):
         self.current_value = None
         self.current_type = None
         self.current_to_draw = 0
-        
+
     def set_color(self, color):
         assert isinstance(color, CardColor)
         self.current_color = color
-        
+
     def set_value(self, value):
         assert isinstance(value, int) and -1 <= value <= 9
         self.current_value = value
-        
+
     def set_type(self, ctype):
         assert isinstance(ctype, CardType)
         self.current_type = ctype
-        
+
     def clear_to_draw(self):
         self.current_to_draw = 0
-        
+
     def add_to_draw(self, num):
         assert isinstance(num, int)
         self.current_to_draw += num
-        
+
     def check_card_playable(self, card):
-        return check_card_playable(card, 
-                                   self.current_color, 
-                                   self.current_value, 
-                                   self.current_type, 
-                                   self.current_to_draw) 
-    
+        return check_card_playable(card,
+                                   self.current_color,
+                                   self.current_value,
+                                   self.current_type,
+                                   self.current_to_draw)
+
     def get_playable(self, cards):
         assert isinstance(cards, list)
-        return [card for card in cards 
-                if check_card_playable(card, 
-                                       self.current_color, 
-                                       self.current_value, 
-                                       self.current_type, 
+        return [card for card in cards
+                if check_card_playable(card,
+                                       self.current_color,
+                                       self.current_value,
+                                       self.current_type,
                                        self.current_to_draw)]
-    
+
     def accept_card(self, card, player, flow_controller):
         assert isinstance(card, Card)
         assert isinstance(player, Player)
@@ -667,12 +676,12 @@ class StateController(object):
         else:
             # raise Error
             raise Exception("Unknown Card Type Encountered while Applying State Change")
-            
+
         self.current_color = new_color
         self.current_value = new_value
         self.current_type = new_type
         self.current_to_draw = new_to_draw
-    
+
     def check_action_validity(self, action):
         # TODO: to support multiple cards as an action
         pass
@@ -689,25 +698,25 @@ class FlowController(object):
         self.current_player = self.current_player_node.data
         self.clockwise = clockwise
         self.skip = -1
-        
+
     def reverse(self):
         self.clockwise = not self.clockwise
-        
+
     def clear_skip(self):
         self.skip = 0
-        
+
     def set_skip(self, num):
         assert isinstance(num, int) and num >= 0
         self.skip = num
-        
+
     def add_skip(self, num=1):
         assert isinstance(num, int) and num > 0
         self.skip += num
-    
+
     def to_next_player(self, skip=None):
         if skip is None:
             skip = self.skip
-        
+
         assert isinstance(skip, int) and skip >= -1
         for i in range(skip + 1):
             if self.clockwise:
@@ -716,7 +725,7 @@ class FlowController(object):
                 self.current_player_node = self.current_player_node.prev_node
         self.current_player = self.current_player_node.data
         self.clear_skip()
-        
+
     def is_player_done(self, player=None):
         # TODO: to check whether the player in under the supervision of this instance
         if player is None:
@@ -732,10 +741,10 @@ class ActionController(object):
     def __init__(self, cards, players, clockwise=True):
         self.players = players
         self.deck_controller = DeckController(cards)
-        self.flow_controller = FlowController(players, clockwise)        
+        self.flow_controller = FlowController(players, clockwise)
         self.state_controller = StateController()
         self.num_first_hand = 7  # TODO: to put it in config or make it customizable
-        
+
     def __str__(self):
         return "ActionController(color={}, value={}, to_draw={}, clockwise={}, skip={})".format(
             self.state_controller.current_color.name,
@@ -748,11 +757,11 @@ class ActionController(object):
     @staticmethod
     def get_color_input():
         return get_color_input()
-    
+
     def apply_penalty(self, player=None):
         if player is None:
             player = self.flow_controller.current_player
-            
+
         assert isinstance(player, Player)
         if self.state_controller.current_to_draw > 0:
             self.give_player_cards(player, self.state_controller.current_to_draw)
@@ -763,45 +772,45 @@ class ActionController(object):
                 # TODO: to make this play optional
                 print("[ActionController] The new card is playable, so play it immediately")
                 self.player_play_card(player, (player.num_cards - 1, card))
-        
+
     def draw_initial_card(self):
         print("[ActionController] Drawing initial card...")
         card = self.deck_controller.draw_card()
         assert isinstance(card, Card)
-        
+
         while card.is_draw4():
             print("[ActionController] Oops, It's a Draw4 Card, Let's Try Again")
             card = self.deck_controller.draw_card()
             assert isinstance(card, Card)
-        
-        print("[ActionController] {} drawed as the initial card.".format(card.__repr__()))
+
+        print("[ActionController] {} drawed as the initial card.".format(card))
         if card.is_number():
             # set current color and number
             assert isinstance(card, NumberCard)
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(card.num)
-            
+
         elif card.is_reverse():
             # the direction is reversed, and the current color is determined by the card
             assert isinstance(card, ReverseCard)
             self.flow_controller.reverse()
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(-1)
-            
+
         elif card.is_skip():
             # the first player is skipped, and the current color is determined by the card
             assert isinstance(card, SkipCard)
             self.flow_controller.add_skip(1)
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(-1)
-            
+
         elif card.is_wildcard():
             # the first player determine the current color and begin playing
             assert isinstance(card, WildCard)
             color = ActionController.get_color_input()
             self.state_controller.set_color(color)
             self.state_controller.set_value(-1)
-            
+
         elif card.is_draw2():
             # the first player draw 2 cards, and the current color is determined by the card
             assert isinstance(card, DrawTwoCard)
@@ -810,35 +819,35 @@ class ActionController(object):
             self.state_controller.set_value(-1)
             self.apply_penalty()
             self.flow_controller.to_next_player()
-            
+
         else:
             # raise Error
             raise Exception("Unknown Card Type of the Initial Card")
-            
+
         self.state_controller.set_type(card.card_type)
-        
+
     def distribute_first_hand(self):
         print("[ActionController] Distributing first hand cards...")
         for _ in range(self.num_first_hand):
             for player in self.players:
                 self.give_player_card(player)
-    
+
     def player_play_card(self, player, play):
         index, card = play
         player.play_card(index)
         self.deck_controller.discard_card(card)
         self.state_controller.accept_card(card, player, self.flow_controller)
-                
+
     def give_player_card(self, player):
         card = self.deck_controller.draw_card()
         player.get_card(card)
         return card
-    
+
     def give_player_cards(self, player, num_cards):
         cards = self.deck_controller.draw_cards(num_cards)
         player.get_cards(cards)
         return cards
-    
+
     def run(self):
         # Do the important thing for three times
         self.deck_controller.shuffle()
@@ -852,11 +861,11 @@ class ActionController(object):
             self.flow_controller.to_next_player()
             player = self.flow_controller.current_player
             print("[ActionController] Switch to {}".format(player))
-            
+
             play = player.get_play(
-                self.state_controller.current_color, 
-                self.state_controller.current_value, 
-                self.state_controller.current_type, 
+                self.state_controller.current_color,
+                self.state_controller.current_value,
+                self.state_controller.current_type,
                 self.state_controller.current_to_draw
             )
             if play is not None:
@@ -870,7 +879,7 @@ class ActionController(object):
         print("[ActionController] Calculaing scores.")
         for player in self.players:
             player.count_score()
-            
+
         print("[ActionController] Present cumulative score for each player")
         print("-----------------------------------------------------------")
         for player in self.players:
@@ -938,42 +947,42 @@ class Game(object):
                 print(pname_input_err)
 
         return name
-        
+
     def run(self):
         # =====================
         # Get Number of Players
         # =====================
         self.num_players = Game.get_num_players()
         print("[Game] Number of Player Set: {}\n".format(self.num_players))
-        
+
         # ===============
         # Get Player Info
         # ===============
         for i in range(self.num_players):
             player_type = Game.get_player_type(i)
             player_name = Game.get_player_name(i)
-            
+
             if player_type == PlayerType.HUMAN:
                 player = HumanPlayer(player_name, i)
             elif player_type == PlayerType.PC_NAIVE:
                 player = PCNaivePlayer(player_name, i)
             else:
                 raise Exception("Unknown Player Type Encountered while Creating Player")
-            
+
             self.players.append(player)
             print("[Game] Player Created: {}\n".format(player))
-            
+
         # =====================================
         # Initialize Cards and ActionController
         # =====================================
         self.cards = make_standard_deck()
         self.action_controller = ActionController(self.cards, self.players)
-        
+
         # ====
         # Play
         # ====
         self.action_controller.run()
-        
+
         print("[Game] Game over.")
 
 
