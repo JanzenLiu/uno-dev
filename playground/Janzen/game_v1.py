@@ -709,6 +709,7 @@ class StateController(object):
 class FlowController(object):
     def __init__(self, players, clockwise=True):
         self.player_loop = LinkedList(players)
+        self.player_num = len(players)
         self.current_player_node = self.player_loop.first_node
         self.current_player = self.current_player_node.data
         self.clockwise = clockwise
@@ -716,6 +717,8 @@ class FlowController(object):
 
     def reverse(self):
         self.clockwise = not self.clockwise
+        if self.player_num == 2:
+            self.add_skip(1)
 
     def clear_skip(self):
         self.skip = 0
@@ -801,34 +804,29 @@ class ActionController(object):
         print(add_label(self, '{} drawed as the initial card.'.format(card)))
         if card.is_number():
             # set current color and number
-            assert isinstance(card, NumberCard)
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(card.num)
 
         elif card.is_reverse():
             # the direction is reversed, and the current color is determined by the card
-            assert isinstance(card, ReverseCard)
             self.flow_controller.reverse()
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(-1)
 
         elif card.is_skip():
             # the first player is skipped, and the current color is determined by the card
-            assert isinstance(card, SkipCard)
             self.flow_controller.add_skip(1)
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(-1)
 
         elif card.is_wildcard():
             # the first player determine the current color and begin playing
-            assert isinstance(card, WildCard)
             color = ActionController.get_color_input()
             self.state_controller.set_color(color)
             self.state_controller.set_value(-1)
 
         elif card.is_draw2():
             # the first player draw 2 cards, and the current color is determined by the card
-            assert isinstance(card, DrawTwoCard)
             self.state_controller.add_to_draw(2)
             self.state_controller.set_color(card.color)
             self.state_controller.set_value(-1)
