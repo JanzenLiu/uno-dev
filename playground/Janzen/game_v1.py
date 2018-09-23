@@ -74,38 +74,34 @@ class Card(object):
     # Type Checkers
     # =============
     def is_number(self):
-        return self.card_type == CardType.NUMBER
+        return isinstance(self, NumberCard)
 
     def is_reverse(self):
-        return self.card_type == CardType.REVERSE
+        return isinstance(self, ReverseCard)
 
     def is_skip(self):
-        return self.card_type == CardType.SKIP
+        return isinstance(self, SkipCard)
 
     def is_wildcard(self):
-        return self.card_type == CardType.WILDCARD
+        return isinstance(self, WildCard)
 
     def is_draw2(self):
-        return self.card_type == CardType.DRAW_2
+        return isinstance(self, DrawTwoCard)
 
     def is_draw4(self):
-        return self.card_type == CardType.DRAW_4
+        return isinstance(self, DrawFourCard)
 
     def is_action(self):
-        return self.card_type != CardType.NUMBER
+        return isinstance(self, ActionCard)
 
     def is_weak_action(self):
-        # TODO: to use type checking instead
-        return self.card_type == CardType.REVERSE or \
-               self.card_type == CardType.SKIP or \
-               self.card_type == CardType.DRAW_2
+        return isinstance(self, WeakActionCard)
 
     def is_strong_action(self):
-        # TODO: to use type checking instead
-        return self.card_type == CardType.WILDCARD or self.card_type == CardType.DRAW_4
+        return isinstance(self, StrongActionCard)
 
     def is_draw_action(self):
-        return self.card_type == CardType.DRAW_2 or self.card_type == CardType.DRAW_4
+        return isinstance(self, DrawTwoCard) or isinstance(self, DrawFourCard)
 
 
 class NumberCard(Card):
@@ -117,9 +113,17 @@ class NumberCard(Card):
         self.num = num
 
 
-class WeakActionCard(Card):
+class ActionCard(Card):
     def __init__(self, card_type, color):
-        assert isinstance(card_type, CardType)  # to refine
+        assert isinstance(card_type, CardType)
+        assert card_type != CardType.NUMBER
+        assert isinstance(color, CardColor)
+
+        super().__init__(card_type, color)
+
+
+class WeakActionCard(ActionCard):
+    def __init__(self, card_type, color):
         assert isinstance(color, CardColor) and color != CardColor.WILD  # might be extended?
 
         super().__init__(card_type, color)
@@ -140,10 +144,8 @@ class DrawTwoCard(WeakActionCard):
         super().__init__(CardType.DRAW_2, color)
 
 
-class StrongActionCard(Card):
+class StrongActionCard(ActionCard):
     def __init__(self, card_type):
-        assert isinstance(card_type, CardType)  # to refine
-
         super().__init__(card_type, CardColor.WILD)
 
 
@@ -203,7 +205,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: same color
         # if previous card is Draw2: same color (and already executed)
         # if previous card is Draw4: same color (and already executed)
-        assert isinstance(card, NumberCard)
         return card.color == current_color or card.num == current_value
 
     elif card.is_reverse():
@@ -213,7 +214,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: same color
         # if previous card is Draw2: same color (and already executed)
         # if previous card is Draw4: same color (and already executed)
-        assert isinstance(card, ReverseCard)
         return current_type == CardType.REVERSE or card.color == current_color
 
     elif card.is_skip():
@@ -223,7 +223,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: same color
         # if previous card is Draw2: same color (and already executed)
         # if previous card is Draw4: same color (and already executed)
-        assert isinstance(card, SkipCard)
         return current_type == CardType.SKIP or card.color == current_color
 
     elif card.is_wildcard():
@@ -233,7 +232,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: always valid
         # if previous card is Draw2: (already executed)
         # if previous card is Draw4: (already executed)
-        assert isinstance(card, WildCard)
         return True
 
     elif card.is_draw2():
@@ -243,7 +241,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: always valid
         # if previous card is Draw2: always valid
         # if previous card is Draw4: (already executed)
-        assert isinstance(card, DrawTwoCard)
         return current_type == CardType.DRAW_2 or card.color == current_color
 
     elif card.is_draw4():
@@ -253,7 +250,6 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         # if previous card is Wild: always valid
         # if previous card is Draw2: always valid
         # if previous card is Draw4: always valid
-        assert isinstance(card, DrawFourCard)
         return True
 
     else:
