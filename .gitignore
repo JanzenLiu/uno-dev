@@ -1,0 +1,4 @@
+# Cache
+**/.ipynb_checkpoints/
+*.pyc
+*.pyo
