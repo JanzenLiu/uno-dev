@@ -10,6 +10,7 @@ import random
 from colorama import init
 from colorama import Fore, Back, Style
 
+
 init()
 
 
@@ -21,6 +22,8 @@ Colormap = {
     'y': Fore.YELLOW,
     'w': Fore.BLACK + Back.WHITE,
 }
+
+
 def colored(content, color='w'):
     color = color.lower()
     assert color in list(Colormap.keys())
@@ -68,7 +71,6 @@ class Card(object):
             return colored("{}({})".format(type(self).__name__, self.color.name), self.color.name[0])
         else:
             return colored("{}()".format(type(self).__name__))
-
 
     # =============
     # Type Checkers
@@ -408,11 +410,11 @@ class Player(object):
             current_to_draw
         )))
         playable_cards = [(i, card) for i, card in enumerate(self.cards)
-                         if check_card_playable(card,
-                                               current_color,
-                                               current_value,
-                                               current_type,
-                                               current_to_draw)]
+                          if check_card_playable(card,
+                                                 current_color,
+                                                 current_value,
+                                                 current_type,
+                                                 current_to_draw)]
         # If playable_cards include no NumberCard or WeakActionCard, all cards are playable
         # If playable_cards include NumberCard or (and) WeakActionCard, DrawFourCard needs to be removed
         matching_card_indices = []
