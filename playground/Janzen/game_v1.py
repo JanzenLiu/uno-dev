@@ -31,7 +31,9 @@ class CardColor(Enum):
 
 # TODO: to seperate out a card checker class
 class Card(object):
-    # TODO: add format_property methods, and unify __repr__ method
+    # TODO: add format_property methods, and unify __repr__ method:
+    # TODO: add __str__ method
+    # TODO: enable colored string while printing card with color
     # TODO: rename property card_type to type
     def __init__(self, card_type, color):
         self.card_type = card_type
@@ -146,19 +148,20 @@ color_input_msg = "Please Select Color, Input One Number from 1 to 4:\n1)RED 2)G
 color_input_err = "Sorry, Your Input is Invalid, Try Again."
 
 
+# TODO: to put input handling method to a specialized class
 def get_color_input():
-        while True:
-            try:
-                print(color_input_msg)
-                color = int(input())
-                if 1 <= color <= 4:
-                    break
-                else:
-                    print(color_input_err)
-            except ValueError:
+    while True:
+        try:
+            print(color_input_msg)
+            color = int(input())
+            if 1 <= color <= 4:
+                break
+            else:
                 print(color_input_err)
+        except ValueError:
+            print(color_input_err)
 
-        return CardColor(color)
+    return CardColor(color)
 
 
 def check_card_playable(card, current_color, current_value, current_type, current_to_draw):
@@ -181,6 +184,7 @@ def check_card_playable(card, current_color, current_value, current_type, curren
     # =========================
     # Penalty has been executed
     # =========================
+    # TODO: to put those comments specifying the logics to somewhere else
     if card.is_number():
         # if previous card is Number: same color or same number
         # if previous card is Reverse: same color
@@ -246,6 +250,7 @@ def check_card_playable(card, current_color, current_value, current_type, curren
         raise Exception("Unknown Card Type Encountered While Checking Validity")
 
 
+# TODO: to aggregate global functions like this into a library class
 def accept_card(card, current_color, current_value, current_type, current_to_draw):
     assert isinstance(card, Card)
     assert isinstance(current_color, CardColor) and current_color != CardColor.WILD
@@ -296,7 +301,8 @@ def accept_card(card, current_color, current_value, current_type, current_to_dra
 # Cards without Color:
 # Wildcard: 4
 # Draw4   : 4
-# TODO: to make those number customizable
+# TODO: to make those number customizable, or at least read them from the config
+# TODO: to put global functions like this to a library class
 def make_standard_deck():
     return list(itertools.chain(
         list(itertools.chain(  # for each color
@@ -311,11 +317,6 @@ def make_standard_deck():
         [WildCard() for _ in range(4)],  # 4 x Wildcard
         [DrawFourCard() for _ in range(4)]  # 4 x Draw4
     ))
-
-
-def state_accept_card(self, card):
-    self.current_color, self.current_value, self.current_type, self.current_to_draw = \
-        accept_card(card, self.current_color, self.current_value, self.current_type, self.current_to_draw)
 
 
 # In[5]:
@@ -387,7 +388,7 @@ class Player(object):
         card = self.cards.pop(index)
         print("[Player] {} plays {}.".format(self.name, card.__repr__()))
         return card
-    
+
     def get_playable(self, current_color, current_value, current_type, current_to_draw):
         print("[Player] {} is looking for possible play under ({}, {}, {}, {})".format(
             self.name, 
@@ -404,6 +405,8 @@ class Player(object):
                                        current_to_draw)]
     
     # @abstractmethod
+    # TODO: to implement this and put the common logic inside the implementation
+    # TODO: to seperate the different logic out to a "get_play_from_playable" or "policy" method
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         pass
     
@@ -423,7 +426,8 @@ class Player(object):
 class PCNaivePlayer(Player):
     def __init__(self, name, idx):
         super().__init__(PlayerType.PC_NAIVE, name, idx)
-        
+
+    # TODO: to move the common logic to the parent class and seperate the unique logic out
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
         
@@ -447,6 +451,7 @@ class HumanPlayer(Player):
     def __init__(self, name, idx):
         super().__init__(PlayerType.HUMAN, name, idx)
 
+    # TODO: to put input handling method to a specialized class
     @staticmethod
     def get_play_input(plays):
         choice_dict = {index: card for index, card in plays}
@@ -469,7 +474,8 @@ class HumanPlayer(Player):
             return None
         else:
             return choice, choice_dict[choice]
-        
+
+    # TODO: to move the common logic to the parent class and seperate the unique logic out
     def get_play(self, current_color, current_value, current_type, current_to_draw):
         plays = self.get_playable(current_color, current_value, current_type, current_to_draw)
         
@@ -532,7 +538,8 @@ class DeckController(object):
     @property
     def used_pile_size(self):
         return len(self.used_pile)
-        
+
+    # TODO: to make this customizable
     def shuffle(self):
         print("[DeckController] Shuffling draw pile...")
         random.shuffle(self.draw_pile)
@@ -880,6 +887,8 @@ class ActionController(object):
 # In[13]:
 
 
+# TODO: to put output literals like these into a specialized class or specialized classes
+# TODO: to add a class to handle output
 nplayers_input_msg = "Please Input a Number as the Number of Players: 2-10"
 nplayers_input_err = "Sorry, Your Input is Invalid, Try Again."
 ptype_input_msg = "Please Select Type of Player #{}, Input One Number from 1 to 2:\n1)HUMAN 2)PC_NAIVE"
@@ -910,6 +919,8 @@ class Game(object):
 
         return num
 
+    # TODO: to put input handling method to a specialized class
+    # TODO: or write a Factory function that accepts msg and err as literals and check function, then output a method
     @staticmethod
     def get_player_type(index):
         msg = ptype_input_msg.format(index + 1)
@@ -926,6 +937,7 @@ class Game(object):
 
         return PlayerType(ptype)
 
+    # TODO: to put input handling method to a specialized class
     @staticmethod
     def get_player_name(index):
         msg = pname_input_msg.format(index + 1)
