@@ -15,9 +15,9 @@ class GameEndCondition(Enum):
     ROUND_1 = 1
     ROUND_3 = 2
     ROUND_5 = 3
-    SCORE_200 = 4
-    SCORE_500 = 5
-    SCORE_1000 = 6
+    LOSS_200 = 4
+    LOSS_500 = 5
+    LOSS_1000 = 6
 
     @staticmethod
     def option_set():
@@ -149,11 +149,11 @@ class Game(object):
             return self._is_end_by_round(3)
         elif self.end_condition == GameEndCondition.ROUND_5:
             return self._is_end_by_round(5)
-        elif self.end_condition == GameEndCondition.SCORE_200:
+        elif self.end_condition == GameEndCondition.LOSS_200:
             return self._is_end_by_loss(200)
-        elif self.end_condition == GameEndCondition.SCORE_500:
+        elif self.end_condition == GameEndCondition.LOSS_500:
             return self._is_end_by_loss(500)
-        elif self.end_condition == GameEndCondition.SCORE_1000:
+        elif self.end_condition == GameEndCondition.LOSS_1000:
             return self._is_end_by_loss(1000)
         else:
             raise Exception("Unknown End Condition Encountered while Checking Game End")
