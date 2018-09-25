@@ -19,6 +19,11 @@ class GameEndCondition(Enum):
     LOSS_500 = 5
     LOSS_1000 = 6
 
+    # modes for simulation
+    ROUND_100 = 7
+    ROUND_1000 = 8
+    ROUND_10000 = 9
+
     @staticmethod
     def option_set():
         return set([option.value for option in GameEndCondition])
@@ -149,6 +154,12 @@ class Game(object):
             return self._is_end_by_round(3)
         elif self.end_condition == GameEndCondition.ROUND_5:
             return self._is_end_by_round(5)
+        elif self.end_condition == GameEndCondition.ROUND_100:
+            return self._is_end_by_round(100)
+        elif self.end_condition == GameEndCondition.ROUND_1000:
+            return self._is_end_by_round(1000)
+        elif self.end_condition == GameEndCondition.ROUND_10000:
+            return self._is_end_by_round(10000)
         elif self.end_condition == GameEndCondition.LOSS_200:
             return self._is_end_by_loss(200)
         elif self.end_condition == GameEndCondition.LOSS_500:
