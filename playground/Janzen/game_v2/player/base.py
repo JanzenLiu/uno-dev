@@ -33,6 +33,7 @@ class Player(object):
         self.idx = idx
         self.cards = []
         self.cumulative_loss = 0
+        self.cumulative_reward = 0
         self.logger = UnoLogger("{}[{} {}]{}".format(Fore.CYAN, type(self).__name__, self.name, Style.RESET_ALL))
 
     def __repr__(self):
@@ -46,6 +47,7 @@ class Player(object):
             "name={}".format(self.name),
             "pos={}".format(self.idx),
             "cumulative_loss={}".format(self.cumulative_loss),
+            "cumulative_reward={}".format(self.cumulative_reward),
             "num_cards={}".format(self.num_cards)
         ]
         if show_cards:
@@ -65,6 +67,10 @@ class Player(object):
 
     def count_loss(self):
         self.cumulative_loss += self.loss
+
+    def add_reward(self, num):
+        assert isinstance(num, int)
+        self.cumulative_reward += num
 
     def is_human(self):
         return False  # to override

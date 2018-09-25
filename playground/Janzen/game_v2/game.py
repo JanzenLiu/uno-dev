@@ -19,6 +19,7 @@ class GameEndCondition(Enum):
     LOSS_200 = 4
     LOSS_500 = 5
     LOSS_1000 = 6
+    REWARD_500 = 7
 
     # modes for simulation
     ROUND_100 = 7
@@ -158,6 +159,14 @@ class Game(object):
                 return True
         return False
 
+    def _is_end_by_reward(self, max_reward):
+        assert isinstance(max_reward, int) and max_reward > 0
+        for player in self.players:
+            assert isinstance(player, Player)
+            if player.cumulative_reward >= max_reward:
+                return True
+        return False
+
     def is_end(self):
         if self.end_condition == GameEndCondition.ROUND_1:
             return self._is_end_by_round(1)
@@ -177,6 +186,8 @@ class Game(object):
             return self._is_end_by_loss(500)
         elif self.end_condition == GameEndCondition.LOSS_1000:
             return self._is_end_by_loss(1000)
+        elif self.end_condition == GameEndCondition.REWARD_500:
+            return self._is_end_by_reward(500)
         else:
             raise Exception("Unknown End Condition Encountered while Checking Game End")
 
