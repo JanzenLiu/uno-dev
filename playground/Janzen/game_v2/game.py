@@ -22,9 +22,9 @@ class GameEndCondition(Enum):
     REWARD_500 = 7
 
     # modes for simulation
-    ROUND_100 = 7
-    ROUND_1000 = 8
-    ROUND_10000 = 9
+    ROUND_100 = 8
+    ROUND_1000 = 9
+    ROUND_10000 = 10
 
     @staticmethod
     def option_set():
