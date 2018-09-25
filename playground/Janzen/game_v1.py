@@ -33,7 +33,7 @@ def colored(content, color='w'):
 def add_label(obj, content):
     basename = type(obj).__bases__[0].__name__
     classname = type(obj).__name__ if basename == 'object' else basename
-    return '[{}] {}'.format(classname, content)
+    return '{: <20} {}'.format('['+classname+']', content)
 
 
 @unique
