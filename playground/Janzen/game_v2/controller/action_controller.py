@@ -133,23 +133,21 @@ class ActionController(Controller):
 
     def update_loss(self):
         self.logger("calculating loss for players...")
-        self.sleep()
         for player in self.players:
             player.count_loss()
 
         msg = ["presenting loss of players...",
-               "-"*self.horizontal_rule_len]
+               "-" * self.horizontal_rule_len]
         for index, player in enumerate(self.players):
+            assert isinstance(player, Player)
             msg.append("{}: {} (cumulative_loss={})".format(player.name,
-                                                             player.loss,
-                                                             player.cumulative_loss))
-        msg.append("-"*self.horizontal_rule_len)
+                                                            player.loss,
+                                                            player.cumulative_loss))
+        msg.append("-" * self.horizontal_rule_len)
         self.logger("\n".join(msg))
-        self.sleep()
 
     def update_reward(self):
         self.logger("calculating reward for players...")
-        self.sleep()
         winner_idx = self.flow_controller.current_player.idx
         loss_sum = 0
         for player in self.players:
@@ -159,14 +157,14 @@ class ActionController(Controller):
         self.flow_controller.current_player.add_reward(loss_sum)
 
         msg = ["presenting reward of players...",
-               "-"*self.horizontal_rule_len]
+               "-" * self.horizontal_rule_len]
         for index, player in enumerate(self.players):
+            assert isinstance(player, Player)
             msg.append("{}: {} (cumulative_reward={})".format(player.name,
-                                                              -player.loss if player.idx != winner_idx else loss_sum,
+                                                              player.loss if player.idx != winner_idx else loss_sum,
                                                               player.cumulative_reward))
-        msg.append("-"*self.horizontal_rule_len)
+        msg.append("-" * self.horizontal_rule_len)
         self.logger("\n".join(msg))
-        self.sleep()
 
     def run(self):
         # Do the important thing for three times
@@ -205,7 +203,9 @@ class ActionController(Controller):
         self.sleep()
 
         self.update_loss()
+        self.sleep()
         self.update_reward()
+        self.sleep()
 
         self.logger("clearing cards for players...")
         for player in self.players:
