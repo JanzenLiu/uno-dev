@@ -13,6 +13,7 @@ class PlayerType(Enum):
     HUMAN = 1
     PC_FIRST_CARD = 2
     PC_RANDOM = 3
+    PC_GREEDY = 4
 
     @staticmethod
     def option_set():
@@ -153,6 +154,9 @@ class Player(object):
             play = None
         else:
             play = self.get_play_from_playable(playable_cards, **info)
+            assert isinstance(play, tuple) and len(play) == 2
+            assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
+            assert isinstance(play[1], Card)
 
         if play is None:
             self.logger("Has no playable cards or decides not to play.")
