@@ -23,8 +23,8 @@ class HumanPlayer(Player):
         choice_dict = {index: card for index, card in playable_cards}
         choice_set = choice_dict.keys()
         choice_msg = ["-1) Not Play"]
-        choice_msg += ["{}){}".format(index, card) for index, card in playable_cards]
-        choice_msg.append("# Your current cards: {}, {} in total".format(self.cards, self.num_cards))
+        choice_msg += ["{})  {}".format(index, card) for index, card in playable_cards]
+        choice_msg.append("# Your current cards: {}, total: {}".format(self.cards, self.num_cards))
         msg = "{}{}".format(card_input_msg, "\n".join(choice_msg))
 
         return get_input(msg,
@@ -44,7 +44,7 @@ class HumanPlayer(Player):
 
     def _get_color(self):
         msg = "{}\n{}".format(color_input_msg,
-                              "# Your current cards: {}, {} in total".format(self.cards, self.num_cards))
+                              "# Your current cards: {}, total: {}".format(self.cards, self.num_cards))
         return get_input(msg,
                          color_input_err,
                          parser=int,

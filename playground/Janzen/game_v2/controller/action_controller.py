@@ -8,6 +8,9 @@ from ..card import Card, NumberCard
 
 
 class ActionController(Controller):
+
+    horizontal_rule_len = 60
+
     def __init__(self, cards, players, num_first_hand=7, clockwise=True, interval=1):
         assert isinstance(cards, list)
         assert isinstance(players, list)
@@ -158,7 +161,7 @@ class ActionController(Controller):
                 self.apply_penalty(player)
                 self.sleep()
             # self.log_state()
-            self.logger("-----------------------------------------------------------")
+            self.logger("-"*self.horizontal_rule_len)
 
         assert isinstance(player, Player)
         self.logger("{} wins!".format(player.name))
@@ -169,12 +172,12 @@ class ActionController(Controller):
             player.count_score()
 
         msg = ["presenting score of players...",
-               "-----------------------------------------------------------"]
+               "-"*self.horizontal_rule_len]
         for index, player in enumerate(self.players):
             msg.append("{}: {} (cumulative_score={})".format(player.name,
                                                              player.score,
                                                              player.cumulative_score))
-        msg.append("-----------------------------------------------------------")
+        msg.append("-"*self.horizontal_rule_len)
         self.logger("\n".join(msg))
         self.sleep()
 
