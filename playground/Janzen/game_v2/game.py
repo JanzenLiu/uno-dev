@@ -191,6 +191,12 @@ class Game(object):
         else:
             raise Exception("Unknown End Condition Encountered while Checking Game End")
 
+    def log_reward(self):
+        self.logger("======================================================")
+        for player in self.players:
+            assert isinstance(player, Player)
+            self.logger("{}: {}".format(player.name, player.cumulative_reward))
+
     def run(self):
         self.last_start_time = time.time()
 
@@ -201,4 +207,5 @@ class Game(object):
 
         self.last_end_time = time.time()
         self.logger("Game over after {} rounds".format(self.num_rounds_played))
-        self.logger("Time consumption: {:.3}s".format(self.last_end_time - self.last_start_time))
+        self.logger("Time consumption: {}s".format(round(self.last_end_time - self.last_start_time, 3)))
+        self.log_reward()
