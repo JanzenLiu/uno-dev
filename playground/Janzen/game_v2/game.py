@@ -1,5 +1,5 @@
 from enum import Enum, unique
-from .player import PlayerType, Player, HumanPlayer, PCNaivePlayer
+from .player import PlayerType, Player, HumanPlayer, PCFirstCardPlayer, construct_player
 from .card import Card, make_standard_deck
 from .controller import ActionController
 from .io import get_input, UnoLogger
@@ -87,14 +87,7 @@ class Game(object):
     def _init_player(player_type, player_name, i):
         assert isinstance(player_type, PlayerType)
         assert isinstance(player_name, str) and 0 < len(player_name) <= 20
-        if player_type == PlayerType.HUMAN:
-            player = HumanPlayer(player_name, i)
-        elif player_type == PlayerType.PC_NAIVE:
-            player = PCNaivePlayer(player_name, i)
-        else:
-            raise Exception("Unknown Player Type Encountered while Creating Player")
-
-        return player
+        return construct_player(player_type, idx=i, name=player_name)
 
     def _init_players(self, players):
         self.players = []

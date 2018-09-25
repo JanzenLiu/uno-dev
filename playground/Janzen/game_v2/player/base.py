@@ -11,7 +11,7 @@ init()
 @unique
 class PlayerType(Enum):
     HUMAN = 1
-    PC_NAIVE = 2
+    PC_FIRST_CARD = 2
 
     @staticmethod
     def option_set():
