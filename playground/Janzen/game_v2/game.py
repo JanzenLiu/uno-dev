@@ -94,10 +94,10 @@ class Game(object):
                          checker=lambda x: 0 < len(x) <= 20)
 
     @staticmethod
-    def _init_player(player_type, player_name, i):
+    def _init_player(i, player_type, player_name, **kwargs):
         assert isinstance(player_type, PlayerType)
         assert isinstance(player_name, str) and 0 < len(player_name) <= 20
-        return construct_player(player_type, idx=i, name=player_name)
+        return construct_player(player_type, idx=i, name=player_name, **kwargs)
 
     def _init_players(self, players):
         self.players = []
@@ -108,7 +108,13 @@ class Game(object):
 
             self.num_players = len(players)
             for i, tup in enumerate(players):
-                player = Game._init_player(tup[0], tup[1], i)
+                if len(tup) == 2:
+                    player = Game._init_player(i, tup[0], tup[1])
+                elif len(tup) == 3:
+                    assert isinstance(tup[2], dict)
+                    player = Game._init_player(i, tup[0], tup[1], **tup[2])
+                else:
+                    raise Exception("Unrecognized Player Config while Creating Game")
                 self.players.append(player)
                 self.logger("Player created from list: {}".format(player))
 
@@ -120,7 +126,7 @@ class Game(object):
                 self.num_players = players
 
             for i in range(self.num_players):
-                player = Game._init_player(Game.get_player_type(i), Game.get_player_name(i), i)
+                player = Game._init_player(i, Game.get_player_type(i), Game.get_player_name(i))
                 self.players.append(player)
                 self.logger("Player created from input: {}".format(player))
         else:
