@@ -1,3 +1,4 @@
+import time
 from enum import Enum, unique
 from .player import PlayerType, Player, HumanPlayer, PCFirstCardPlayer, construct_player
 from .card import Card, make_standard_deck
@@ -64,6 +65,10 @@ class Game(object):
         self.end_condition = end_condition
         self.interval = interval
         self.action_controller = None
+
+        # set timer
+        self.last_start_time = -1
+        self.last_end_time = -1
 
     @staticmethod
     def get_num_players():
@@ -170,9 +175,13 @@ class Game(object):
             raise Exception("Unknown End Condition Encountered while Checking Game End")
 
     def run(self):
+        self.last_start_time = time.time()
+
         while not self.is_end():
             self.action_controller = ActionController(self.cards, self.players, interval=self.interval)
             self.action_controller.run()
             self.num_rounds_played += 1
 
-        self.logger("Game Over after {} rounds".format(self.num_rounds_played))
+        self.last_end_time = time.time()
+        self.logger("Game over after {} rounds".format(self.num_rounds_played))
+        self.logger("Time consumption: {:.3}s".format(self.last_end_time - self.last_start_time))
