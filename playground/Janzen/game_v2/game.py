@@ -134,11 +134,11 @@ class Game(object):
         assert isinstance(rounds, int) and rounds > 0
         return self.num_rounds_played >= rounds
 
-    def _is_end_by_score(self, max_score):
-        assert isinstance(max_score, int) and max_score > 0
+    def _is_end_by_loss(self, max_loss):
+        assert isinstance(max_loss, int) and max_loss > 0
         for player in self.players:
             assert isinstance(player, Player)
-            if player.cumulative_score >= max_score:
+            if player.cumulative_loss >= max_loss:
                 return True
         return False
 
@@ -150,11 +150,11 @@ class Game(object):
         elif self.end_condition == GameEndCondition.ROUND_5:
             return self._is_end_by_round(5)
         elif self.end_condition == GameEndCondition.SCORE_200:
-            return self._is_end_by_score(200)
+            return self._is_end_by_loss(200)
         elif self.end_condition == GameEndCondition.SCORE_500:
-            return self._is_end_by_score(500)
+            return self._is_end_by_loss(500)
         elif self.end_condition == GameEndCondition.SCORE_1000:
-            return self._is_end_by_score(1000)
+            return self._is_end_by_loss(1000)
         else:
             raise Exception("Unknown End Condition Encountered while Checking Game End")
 

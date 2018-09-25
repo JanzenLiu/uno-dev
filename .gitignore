@@ -1,4 +1,5 @@
 # Cache
 **/.ipynb_checkpoints/
+**/.idea/
 *.pyc
 *.pyo

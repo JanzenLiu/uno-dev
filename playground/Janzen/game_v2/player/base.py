@@ -31,7 +31,7 @@ class Player(object):
         self.name = name
         self.idx = idx
         self.cards = []
-        self.cumulative_score = 0
+        self.cumulative_loss = 0
         self.logger = UnoLogger("{}[{} {}]{}".format(Fore.CYAN, type(self).__name__, self.name, Style.RESET_ALL))
 
     def __repr__(self):
@@ -44,7 +44,7 @@ class Player(object):
         attr_strings = [
             "name={}".format(self.name),
             "pos={}".format(self.idx),
-            "cumulative_score={}".format(self.cumulative_score),
+            "cumulative_loss={}".format(self.cumulative_loss),
             "num_cards={}".format(self.num_cards)
         ]
         if show_cards:
@@ -56,14 +56,14 @@ class Player(object):
         return len(self.cards)
 
     @property
-    def score(self):
-        score = 0
+    def loss(self):
+        loss = 0
         for card in self.cards:
-            score += card.score
-        return score
+            loss += card.score
+        return loss
 
-    def count_score(self):
-        self.cumulative_score += self.score
+    def count_loss(self):
+        self.cumulative_loss += self.loss
 
     def is_human(self):
         return False  # to override

@@ -166,17 +166,17 @@ class ActionController(Controller):
         assert isinstance(player, Player)
         self.logger("{} wins!".format(player.name))
         self.sleep()
-        self.logger("calculating score for players...")
+        self.logger("calculating loss for players...")
         self.sleep()
         for player in self.players:
-            player.count_score()
+            player.count_loss()
 
-        msg = ["presenting score of players...",
+        msg = ["presenting loss of players...",
                "-"*self.horizontal_rule_len]
         for index, player in enumerate(self.players):
-            msg.append("{}: {} (cumulative_score={})".format(player.name,
-                                                             player.score,
-                                                             player.cumulative_score))
+            msg.append("{}: {} (cumulative_loss={})".format(player.name,
+                                                             player.loss,
+                                                             player.cumulative_loss))
         msg.append("-"*self.horizontal_rule_len)
         self.logger("\n".join(msg))
         self.sleep()
