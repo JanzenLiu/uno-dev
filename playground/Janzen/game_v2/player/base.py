@@ -12,6 +12,7 @@ init()
 class PlayerType(Enum):
     HUMAN = 1
     PC_FIRST_CARD = 2
+    PC_RANDOM = 3
 
     @staticmethod
     def option_set():

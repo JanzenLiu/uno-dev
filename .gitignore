@@ -3,3 +3,6 @@
 **/.idea/
 *.pyc
 *.pyo
+
+# local scripts
+*_local.py
