@@ -1,6 +1,6 @@
 try:
     from .game_v2 import Game, GameEndCondition, PlayerType
-except SystemError:
+except (SystemError, ModuleNotFoundError) as e:
     from game_v2 import Game, GameEndCondition, PlayerType
 
 
