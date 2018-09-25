@@ -131,6 +131,43 @@ class ActionController(Controller):
         for player in self.players:
             self.give_player_cards(player, self.num_first_hand)
 
+    def update_loss(self):
+        self.logger("calculating loss for players...")
+        self.sleep()
+        for player in self.players:
+            player.count_loss()
+
+        msg = ["presenting loss of players...",
+               "-"*self.horizontal_rule_len]
+        for index, player in enumerate(self.players):
+            msg.append("{}: {} (cumulative_loss={})".format(player.name,
+                                                             player.loss,
+                                                             player.cumulative_loss))
+        msg.append("-"*self.horizontal_rule_len)
+        self.logger("\n".join(msg))
+        self.sleep()
+
+    def update_reward(self):
+        self.logger("calculating reward for players...")
+        self.sleep()
+        winner_idx = self.flow_controller.current_player.idx
+        loss_sum = 0
+        for player in self.players:
+            if player.idx != winner_idx:
+                player.add_reward(-1 * player.loss)
+                loss_sum += player.loss
+        self.flow_controller.current_player.add_reward(loss_sum)
+
+        msg = ["presenting reward of players...",
+               "-"*self.horizontal_rule_len]
+        for index, player in enumerate(self.players):
+            msg.append("{}: {} (cumulative_reward={})".format(player.name,
+                                                              -player.loss if player.idx != winner_idx else loss_sum,
+                                                              player.cumulative_reward))
+        msg.append("-"*self.horizontal_rule_len)
+        self.logger("\n".join(msg))
+        self.sleep()
+
     def run(self):
         # Do the important thing for three times
         self.deck_controller.shuffle()
@@ -166,20 +203,9 @@ class ActionController(Controller):
         assert isinstance(player, Player)
         self.logger("{} wins!".format(player.name))
         self.sleep()
-        self.logger("calculating loss for players...")
-        self.sleep()
-        for player in self.players:
-            player.count_loss()
 
-        msg = ["presenting loss of players...",
-               "-"*self.horizontal_rule_len]
-        for index, player in enumerate(self.players):
-            msg.append("{}: {} (cumulative_loss={})".format(player.name,
-                                                             player.loss,
-                                                             player.cumulative_loss))
-        msg.append("-"*self.horizontal_rule_len)
-        self.logger("\n".join(msg))
-        self.sleep()
+        self.update_loss()
+        self.update_reward()
 
         self.logger("clearing cards for players...")
         for player in self.players:
