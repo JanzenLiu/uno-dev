@@ -12,7 +12,6 @@ class PCRandomPlayer(Player):
 
     def get_play_from_playable(self, playable_cards, **info):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0
-        print(playable_cards)
         return random.choice(playable_cards)
 
     def play_new_playable(self, new_playable, **info):
