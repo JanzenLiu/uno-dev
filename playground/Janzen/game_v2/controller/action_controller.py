@@ -160,7 +160,7 @@ class ActionController(Controller):
                "-" * self.horizontal_rule_len]
         for index, player in enumerate(self.players):
             assert isinstance(player, Player)
-            msg.append("{}: {} (cumulative_reward={})".format(player.name,
+            msg.append("{}: -{} (cumulative_reward={})".format(player.name,
                                                               player.loss if player.idx != winner_idx else loss_sum,
                                                               player.cumulative_reward))
         msg.append("-" * self.horizontal_rule_len)

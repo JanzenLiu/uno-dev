@@ -19,8 +19,3 @@ class NumberCard(Card):
             return False
         else:
             return self.color == current_color or self.num == current_value
-
-
-if __name__ == "__main__":
-    card = NumberCard(CardColor.RED, 0)
-    print(card)
