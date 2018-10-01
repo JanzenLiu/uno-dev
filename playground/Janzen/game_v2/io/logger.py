@@ -1,7 +1,26 @@
-class UnoLogger(object):
-    def __init__(self, prefix):
-        assert isinstance(prefix, str) and len(prefix) > 0
-        self.prefix = prefix
+import logging
+from colorama import init, Style
 
-    def __call__(self, string):
-        print("{} {}".format(self.prefix, string))
+
+class UnoLogger(logging.Logger):
+    def __init__(self, name, color, stream=True, filename=None):
+        super().__init__(name, logging.INFO)
+        self.color = color
+
+        init()
+        formatter = logging.Formatter("{}[%(name)s]{} %(message)s".format(self.color, Style.RESET_ALL))
+
+        if stream:
+            sh = logging.StreamHandler()
+            sh.setFormatter(formatter)
+            sh.setLevel(logging.INFO)
+            self.addHandler(sh)
+
+        if filename is not None:
+            fh = logging.FileHandler(filename)
+            fh.setFormatter(formatter)
+            fh.setLevel(logging.INFO)
+            self.addHandler(fh)
+
+    def __call__(self, string, *args, **kwargs):
+        self.info(string, *args, **kwargs)

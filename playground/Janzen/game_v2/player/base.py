@@ -35,7 +35,7 @@ class Player(object):
         self.cards = []
         self.cumulative_loss = 0
         self.cumulative_reward = 0
-        self.logger = UnoLogger("{}[{} {}]{}".format(Fore.CYAN, type(self).__name__, self.name, Style.RESET_ALL))
+        self.logger = UnoLogger(name="{} {}".format(type(self).__name__, self.name), color=Fore.CYAN)
 
     def __repr__(self):
         return "{}({})".format(self.type.name, self.format_attribute())

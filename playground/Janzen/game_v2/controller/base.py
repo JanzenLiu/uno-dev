@@ -8,7 +8,7 @@ init()
 
 class Controller(object):
     def __init__(self):
-        self.logger = UnoLogger("{}[{}]{}".format(Fore.LIGHTCYAN_EX, type(self).__name__, Style.RESET_ALL))
+        self.logger = UnoLogger(name=type(self).__name__, color=Fore.LIGHTCYAN_EX)
 
     def __repr__(self):
         return "{}({})".format(type(self).__name__, self.format_attribute())

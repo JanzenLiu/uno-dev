@@ -48,7 +48,7 @@ class Game(object):
         assert isinstance(end_condition, GameEndCondition)
         assert isinstance(interval, (int, float)) or interval > 0
         # set logger
-        self.logger = UnoLogger("{}{}{}".format(Fore.LIGHTMAGENTA_EX, "[Game]", Style.RESET_ALL))
+        self.logger = UnoLogger(name="[Game]", color=Fore.LIGHTMAGENTA_EX)
 
         # set players
         self.num_players = 0
