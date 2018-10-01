@@ -1,13 +1,16 @@
 import logging
-from colorama import init, Style
+from colorama import init, Fore, Style
+
+
+init()
 
 
 class UnoLogger(logging.Logger):
     def __init__(self, name, color, stream=True, filename=None):
+        assert isinstance(name, str) and len(name) > 0
         super().__init__(name, logging.INFO)
         self.color = color
 
-        init()
         formatter = logging.Formatter("{}[%(name)s]{} %(message)s".format(self.color, Style.RESET_ALL))
 
         if stream:
