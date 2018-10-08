@@ -35,6 +35,8 @@ class Player(object):
         self.name = name
         self.idx = idx
         self.cards = []
+        self.num_rounds = 0
+        self.num_wins = 0
         self.cumulative_loss = 0
         self.cumulative_reward = 0
         self.logger = UnoLogger(name="{} {}".format(type(self).__name__, self.name),
@@ -70,6 +72,10 @@ class Player(object):
         for card in self.cards:
             loss += card.score
         return loss
+    
+    @property
+    def win_rate(self):
+        return float(self.num_wins) / self.num_rounds
 
     def count_loss(self):
         self.cumulative_loss += self.loss
@@ -77,6 +83,12 @@ class Player(object):
     def add_reward(self, num):
         assert isinstance(num, int)
         self.cumulative_reward += num
+
+    def add_record(self, is_winner):
+        assert isinstance(is_winner, bool)
+        self.num_rounds += 1
+        if is_winner:
+            self.num_wins += 1
 
     def is_human(self):
         return False  # to override

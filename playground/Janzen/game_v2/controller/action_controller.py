@@ -161,8 +161,25 @@ class ActionController(Controller):
         for index, player in enumerate(self.players):
             assert isinstance(player, Player)
             msg.append("{}: {} (cumulative_reward={})".format(player.name,
-                                                              player.loss * (-1) if player.idx != winner_idx else loss_sum,
+                                                              player.loss*-1 if player.idx != winner_idx else loss_sum,
                                                               player.cumulative_reward))
+        msg.append("-" * self.horizontal_rule_len)
+        self.logger("\n".join(msg))
+
+    def update_records(self):
+        self.logger("updating win/loss records for players...")
+        winner_idx = self.flow_controller.current_player.idx
+        for player in self.players:
+            player.add_record(player.idx == winner_idx)
+
+        msg = ["presenting records of players...",
+               "-" * self.horizontal_rule_len]
+        for index, player in enumerate(self.players):
+            assert isinstance(player, Player)
+            msg.append("{}: {}/{} (winning rate={}%)".format(player.name,
+                                                             player.num_wins,
+                                                             player.num_rounds,
+                                                             round(player.win_rate * 100, 1)))
         msg.append("-" * self.horizontal_rule_len)
         self.logger("\n".join(msg))
 
@@ -205,6 +222,8 @@ class ActionController(Controller):
         self.update_loss()
         self.sleep()
         self.update_reward()
+        self.sleep()
+        self.update_records()
         self.sleep()
 
         self.logger("clearing cards for players...")
