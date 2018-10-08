@@ -50,6 +50,7 @@ class Game(object):
         assert isinstance(verbose, bool)
         # set logger
         self.logger = UnoLogger(name="Game", color=Fore.LIGHTMAGENTA_EX)
+        self.verbose = verbose
 
         # set players
         self.num_players = 0
@@ -62,7 +63,6 @@ class Game(object):
 
         # set state
         self.num_rounds_played = 0
-        self.verbose = verbose
 
         # set controllers
         self.end_condition = end_condition
@@ -112,9 +112,11 @@ class Game(object):
             self.num_players = len(players)
             for i, tup in enumerate(players):
                 if len(tup) == 2:
-                    player = Game._init_player(i, tup[0], tup[1])
+                    player = Game._init_player(i, tup[0], tup[1], stream=self.verbose)
                 elif len(tup) == 3:
                     assert isinstance(tup[2], dict)
+                    if "stream" not in tup[2]:
+                        tup[2]["stream"] = self.verbose
                     player = Game._init_player(i, tup[0], tup[1], **tup[2])
                 else:
                     raise Exception("Unrecognized Player Config while Creating Game")
