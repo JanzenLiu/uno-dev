@@ -29,6 +29,8 @@ class Player(object):
         assert isinstance(ptype, PlayerType)
         assert isinstance(name, str)
         assert isinstance(idx, int) and idx >= 0
+        assert isinstance(stream, bool)
+        assert filename is None or isinstance(filename, str)
         self.type = ptype
         self.name = name
         self.idx = idx
