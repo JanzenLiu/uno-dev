@@ -106,22 +106,33 @@ class Game(object):
         self.players = []
 
         if isinstance(players, list):
-            assert isinstance(players[0], tuple)
             assert 2 <= len(players) <= 10
-
             self.num_players = len(players)
-            for i, tup in enumerate(players):
-                if len(tup) == 2:
-                    player = Game._init_player(i, tup[0], tup[1], stream=self.verbose)
-                elif len(tup) == 3:
-                    assert isinstance(tup[2], dict)
-                    if "stream" not in tup[2]:
-                        tup[2]["stream"] = self.verbose
-                    player = Game._init_player(i, tup[0], tup[1], **tup[2])
-                else:
-                    raise Exception("Unrecognized Player Config while Creating Game")
-                self.players.append(player)
-                self.logger("Player created from list: {}".format(player))
+
+            if isinstance(players[0], tuple):
+                for i, tup in enumerate(players):
+                    assert isinstance(tup, tuple)
+                    if len(tup) == 2:
+                        player = Game._init_player(i, tup[0], tup[1], stream=self.verbose)
+                    elif len(tup) == 3:
+                        assert isinstance(tup[2], dict)
+                        kwargs = tup[2].copy()
+                        if "stream" not in tup[2]:
+                            kwargs["stream"] = self.verbose
+                        player = Game._init_player(i, tup[0], tup[1], **kwargs)
+                    else:
+                        raise Exception("Unrecognized Player Config while Creating Game")
+                    self.players.append(player)
+                    self.logger("Player created from list: {}".format(player))
+            elif isinstance(players[0], Player):
+                for i, player in enumerate(players):
+                    assert isinstance(player, Player)
+                    player.set_idx(i)
+
+                    self.players.append(player)
+                    self.logger("Player given in list: {}".format(player))
+            else:
+                raise Exception("Unknown Players Config Encountered while Creating Game")
 
         elif players is None or isinstance(players, int):
             if players is None:

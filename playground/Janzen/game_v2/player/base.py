@@ -80,6 +80,10 @@ class Player(object):
     def win_rate(self):
         return float(self.num_wins) / self.num_rounds
 
+    def set_idx(self, idx):
+        assert isinstance(idx, int) and idx >= 0
+        self.idx = idx
+
     def count_loss(self):
         self.cumulative_loss += self.loss
 
