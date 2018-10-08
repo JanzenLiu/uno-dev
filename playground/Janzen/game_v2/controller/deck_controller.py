@@ -10,9 +10,14 @@ class DeckController(Controller):
         assert len(cards) > 0
         for card in cards:
             assert isinstance(card, Card)
-        self.deck_size = len(cards)
+        self.deck = cards
+        self.num_decks = 1
         self.draw_pile = cards.copy() if copy else cards
         self.used_pile = []
+
+    @property
+    def deck_size(self):
+        return len(self.deck) * self.num_decks
 
     @property
     def draw_pile_size(self):
@@ -36,12 +41,22 @@ class DeckController(Controller):
     def regenerate_draw_pile(self):
         assert self.draw_pile_size == 0  # only enable regeneration of draw pile while it is run out
         self.logger("Regenerating the draw pile...")
-        self.draw_pile = self.used_pile
-        self.used_pile = []
+
+        if self.used_pile_size > 0:
+            self.draw_pile = self.used_pile
+            self.used_pile = []
+            self.shuffle()
+        else:
+            self.add_deck()  # cards run out, need to add one deck
         self.logger("Done. New draw pilie size: {}".format(self.draw_pile_size))
 
+    def add_deck(self):
+        self.logger("Adding one deck to the draw pile...")
+        self.num_decks += 1
+        self.draw_pile.append(self.deck.copy())
+        self.shuffle()
+
     def _draw_card(self):
-        # TODO: to consider the case that both draw_pile and used_pile is empty
         assert self.draw_pile_size > 0
 
         # get top card and remove it from the data structure
