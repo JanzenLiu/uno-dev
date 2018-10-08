@@ -6,3 +6,6 @@
 
 # local scripts
 *_local.py
+
+# local records
+*.csv
