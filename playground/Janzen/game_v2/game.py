@@ -199,6 +199,15 @@ class Game(object):
             assert isinstance(player, Player)
             self.logger("{}: {}".format(player.name, player.cumulative_reward))
 
+    def log_record(self):
+        self.logger("======================================================")
+        for index, player in enumerate(self.players):
+            assert isinstance(player, Player)
+            self.logger("{}: {}/{} (winning rate={}%)".format(player.name,
+                                                              player.num_wins,
+                                                              player.num_rounds,
+                                                              round(player.win_rate * 100, 1)))
+
     def run(self):
         self.last_start_time = time.time()
 
@@ -214,3 +223,4 @@ class Game(object):
         self.logger("Game over after {} rounds".format(self.num_rounds_played))
         self.logger("Time consumption: {}s".format(round(self.last_end_time - self.last_start_time, 3)))
         self.log_reward()
+        self.log_record()
