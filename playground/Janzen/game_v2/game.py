@@ -37,7 +37,7 @@ class GameEndCondition(Enum):
 
 nplayers_input_msg = "Please Input a Number as the Number of Players: 2-10"
 nplayers_input_err = "Sorry, Your Input is Invalid, Try Again."
-ptype_input_msg = "Please Select Type of Player #{}, Input One Number from 1 to 2:\n" + PlayerType.option_string()
+ptype_input_msg = "Please Select Type of Player #{}, Input One Number from 1 to {}:\n" + PlayerType.option_string()
 ptype_input_err = "Sorry, Your Input is Invalid, Try Again."
 pname_input_msg = "Please Input the Name for Player #{} (Max Length: 20)"
 pname_input_err = "Sorry, Your Input is Invalid, Try Again."
@@ -80,7 +80,7 @@ class Game(object):
 
     @staticmethod
     def get_player_type(index):
-        msg = ptype_input_msg.format(index + 1)
+        msg = ptype_input_msg.format(index + 1, len(PlayerType))
         return get_input(msg,
                          ptype_input_err,
                          parser=int,
