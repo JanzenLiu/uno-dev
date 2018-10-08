@@ -3,8 +3,9 @@ from ..card import CardColor, Card
 
 
 class PCGreedyPlayer(Player):
-    def __init__(self, name, idx, stream=True, filename=None):
-        super().__init__(PlayerType.PC_GREEDY, name, idx, stream=stream, filename=filename)
+    def __init__(self, name, idx, stream=True, filename=None, save_rewards=False):
+        super().__init__(PlayerType.PC_GREEDY, name, idx,
+                         stream=stream, filename=filename, save_rewards=save_rewards)
 
     def get_play_from_playable(self, playable_cards, **info):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0

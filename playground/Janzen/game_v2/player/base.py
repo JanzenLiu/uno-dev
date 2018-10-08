@@ -25,12 +25,13 @@ class PlayerType(Enum):
 
 
 class Player(object):
-    def __init__(self, ptype, name, idx, stream=True, filename=None):
+    def __init__(self, ptype, name, idx, stream=True, filename=None, save_rewards=False):
         assert isinstance(ptype, PlayerType)
         assert isinstance(name, str)
         assert isinstance(idx, int) and idx >= 0
         assert isinstance(stream, bool)
-        assert filename is None or isinstance(filename, str)
+        assert isinstance(filename, str) or filename is None
+        assert isinstance(save_rewards, bool)
         self.type = ptype
         self.name = name
         self.idx = idx
@@ -43,6 +44,8 @@ class Player(object):
                                 color=Fore.CYAN,
                                 stream=stream,
                                 filename=filename)
+        self.save_rewards = save_rewards
+        self.rewards = []
 
     def __repr__(self):
         return "{}({})".format(self.type.name, self.format_attribute())
@@ -83,6 +86,8 @@ class Player(object):
     def add_reward(self, num):
         assert isinstance(num, int)
         self.cumulative_reward += num
+        if self.save_rewards:
+            self.rewards.append(num)
 
     def add_record(self, is_winner):
         assert isinstance(is_winner, bool)

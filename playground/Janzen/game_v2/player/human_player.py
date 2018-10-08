@@ -12,8 +12,9 @@ color_input_err = "Sorry, Your Input is Invalid, Try Again."
 
 
 class HumanPlayer(Player):
-    def __init__(self, name, idx, stream=True, filename=None):
-        super().__init__(PlayerType.HUMAN, name, idx, stream=stream, filename=filename)
+    def __init__(self, name, idx, stream=True, filename=None, save_rewards=False):
+        super().__init__(PlayerType.HUMAN, name, idx,
+                         stream=stream, filename=filename, save_rewards=save_rewards)
 
     def is_human(self):
         return True
