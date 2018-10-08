@@ -5,8 +5,8 @@ from ..player import Player
 
 
 class StateController(Controller):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, stream=True, filename=None):
+        super().__init__(stream=stream, filename=filename)
         self.current_color = None
         self.current_value = None
         self.current_type = None

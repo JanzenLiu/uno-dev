@@ -2,7 +2,7 @@ from enum import Enum, unique
 from ..card import CardColor, Card
 from ..io import UnoLogger
 from colorama import init
-from colorama import Fore, Style
+from colorama import Fore
 
 
 init()
@@ -25,7 +25,7 @@ class PlayerType(Enum):
 
 
 class Player(object):
-    def __init__(self, ptype, name, idx):
+    def __init__(self, ptype, name, idx, stream=True, filename=None):
         assert isinstance(ptype, PlayerType)
         assert isinstance(name, str)
         assert isinstance(idx, int) and idx >= 0
@@ -35,7 +35,10 @@ class Player(object):
         self.cards = []
         self.cumulative_loss = 0
         self.cumulative_reward = 0
-        self.logger = UnoLogger(name="{} {}".format(type(self).__name__, self.name), color=Fore.CYAN)
+        self.logger = UnoLogger(name="{} {}".format(type(self).__name__, self.name),
+                                color=Fore.CYAN,
+                                stream=stream,
+                                filename=filename)
 
     def __repr__(self):
         return "{}({})".format(self.type.name, self.format_attribute())

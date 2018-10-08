@@ -11,16 +11,16 @@ class ActionController(Controller):
 
     horizontal_rule_len = 60
 
-    def __init__(self, cards, players, num_first_hand=7, clockwise=True, interval=1):
+    def __init__(self, cards, players, num_first_hand=7, clockwise=True, interval=1, stream=True, filename=None):
         assert isinstance(cards, list)
         assert isinstance(players, list)
         assert isinstance(num_first_hand, int) and 1 <= num_first_hand <= (len(cards) - 1) / len(players)
         assert isinstance(interval, (int, float)) or interval > 0
-        super().__init__()
+        super().__init__(stream=stream, filename=filename)
         self.players = players
-        self.deck_controller = DeckController(cards)
-        self.flow_controller = FlowController(players, clockwise)
-        self.state_controller = StateController()
+        self.deck_controller = DeckController(cards, stream=stream, filename=filename)
+        self.flow_controller = FlowController(players, clockwise, stream=stream, filename=filename)
+        self.state_controller = StateController(stream=stream, filename=filename)
         self.num_first_hand = num_first_hand
         self.interval = interval
 

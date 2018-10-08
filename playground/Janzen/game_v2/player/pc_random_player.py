@@ -5,9 +5,9 @@ from ..card import CardColor
 
 
 class PCRandomPlayer(Player):
-    def __init__(self, name, idx, play_draw=1.):
+    def __init__(self, name, idx, play_draw=1., stream=True, filename=None):
         assert (isinstance(play_draw, float) and 0 <= play_draw <= 1) or play_draw == 0 or play_draw == 1
-        super().__init__(PlayerType.PC_RANDOM, name, idx)
+        super().__init__(PlayerType.PC_RANDOM, name, idx, stream=stream, filename=filename)
         self.probs_for_draw = [float(play_draw), float(1 - play_draw)]
 
     def get_play_from_playable(self, playable_cards, **info):

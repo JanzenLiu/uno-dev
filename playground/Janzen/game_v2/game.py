@@ -1,11 +1,11 @@
 import time
 from enum import Enum, unique
-from .player import PlayerType, Player, HumanPlayer, PCFirstCardPlayer, construct_player
+from .player import PlayerType, Player, construct_player
 from .card import Card, make_standard_deck
 from .controller import ActionController
 from .io import get_input, UnoLogger
 from colorama import init
-from colorama import Fore, Style
+from colorama import Fore
 
 
 init()
@@ -44,9 +44,10 @@ pname_input_err = "Sorry, Your Input is Invalid, Try Again."
 
 
 class Game(object):
-    def __init__(self, cards=None, players=None, end_condition=GameEndCondition.ROUND_1, interval=1):
+    def __init__(self, cards=None, players=None, end_condition=GameEndCondition.ROUND_1, interval=1, verbose=True):
         assert isinstance(end_condition, GameEndCondition)
         assert isinstance(interval, (int, float)) or interval > 0
+        assert isinstance(verbose, bool)
         # set logger
         self.logger = UnoLogger(name="Game", color=Fore.LIGHTMAGENTA_EX)
 
@@ -61,6 +62,7 @@ class Game(object):
 
         # set state
         self.num_rounds_played = 0
+        self.verbose = verbose
 
         # set controllers
         self.end_condition = end_condition
@@ -201,7 +203,10 @@ class Game(object):
         self.last_start_time = time.time()
 
         while not self.is_end():
-            self.action_controller = ActionController(self.cards, self.players, interval=self.interval)
+            self.action_controller = ActionController(self.cards,
+                                                      self.players,
+                                                      interval=self.interval,
+                                                      stream=self.verbose)
             self.action_controller.run()
             self.num_rounds_played += 1
 

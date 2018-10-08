@@ -3,8 +3,8 @@ from ..card import CardColor
 
 
 class PCFirstCardPlayer(Player):
-    def __init__(self, name, idx):
-        super().__init__(PlayerType.PC_FIRST_CARD, name, idx)
+    def __init__(self, name, idx, stream=True, filename=None):
+        super().__init__(PlayerType.PC_FIRST_CARD, name, idx, stream=stream, filename=filename)
 
     def get_play_from_playable(self, playable_cards, **info):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0

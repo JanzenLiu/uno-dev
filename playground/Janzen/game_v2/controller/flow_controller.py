@@ -30,10 +30,10 @@ class LinkedList(object):
 
 
 class FlowController(Controller):
-    def __init__(self, players, clockwise=True):
+    def __init__(self, players, clockwise=True, stream=True, filename=None):
         for player in players:
             assert isinstance(player, Player)
-        super().__init__()
+        super().__init__(stream=stream, filename=filename)
         self.num_players = len(players)
         self.player_loop = LinkedList(players)
         self.current_player_node = self.player_loop.first_node

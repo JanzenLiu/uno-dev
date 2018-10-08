@@ -4,8 +4,8 @@ from ..card import Card
 
 
 class DeckController(Controller):
-    def __init__(self, cards, copy=True):
-        super().__init__()
+    def __init__(self, cards, copy=True, stream=True, filename=None):
+        super().__init__(stream=stream, filename=filename)
         assert isinstance(cards, list)
         assert len(cards) > 0
         for card in cards:
