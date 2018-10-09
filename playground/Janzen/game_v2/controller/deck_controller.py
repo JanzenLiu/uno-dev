@@ -53,7 +53,7 @@ class DeckController(Controller):
     def add_deck(self):
         self.logger("Adding one deck to the draw pile...")
         self.num_decks += 1
-        self.draw_pile.append(self.deck.copy())
+        self.draw_pile += self.deck.copy()
         self.shuffle()
 
     def _draw_card(self):
