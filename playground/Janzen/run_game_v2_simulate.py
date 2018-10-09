@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 assert target_player.name == target_player_tup[1]
 
                 # update records
-                # player_type | player_params | num_rounds | num_wins | win_rate | cum_rewards
+                # player_type | player_params | num_players | pos | num_wins | cum_rewards
                 row = {
                     cols[0]: target_player_tup[0].name,
                     cols[1]: target_player_tup[2] if len(target_player_tup) == 3 else "",
