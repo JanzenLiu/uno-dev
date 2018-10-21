@@ -9,6 +9,7 @@
 
 # local records
 *.csv
+*.pkl
 
 # local graph directory
 local_graphs/
