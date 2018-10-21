@@ -23,7 +23,8 @@ if __name__ == "__main__":
     # ===================
     # records preparation
     # ===================
-    out_path = "simulation_10000rounds_{}.csv".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
+    final_csv_name = "simulation_10000rounds_{}".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
+    out_path = "{}.csv".format(final_csv_name)
     cols = ["player_type", "player_params", "num_players", "pos", "num_wins", "cum_reward"]
     df = pd.DataFrame(columns=cols)  # keep the records
 
@@ -31,11 +32,15 @@ if __name__ == "__main__":
     # other setup
     # ===========
     end_condition = GameEndCondition.ROUND_10000
+    min_num_players = 2
+    max_num_players = 10
+    num_backup_step = 3
+    num_backup_points = range(min_num_players + num_backup_step - 1, max_num_players + 1, num_backup_step)
 
     for target_player_tup in target_players:
         assert isinstance(target_player_tup, tuple)
 
-        for num_players in range(2, 11):
+        for num_players in range(min_num_players, max_num_players + 1):
 
             for pos in range(num_players):
                 print("Testing {} ({}@{})...".format(target_player_tup[1], pos, num_players))
@@ -63,5 +68,10 @@ if __name__ == "__main__":
                 # *** END ***
 
                 print()
+            # backup current df
+            # TODO: backup the whole df or just the part that has not been backuped yet?
+            if num_players in num_backup_points:
+                backup_path = "{}_to_{}_to_{}.csv".format(final_csv_name, target_player_tup[0].name, num_players)
+                df.to_csv(backup_path, index=False)
 
     df.to_csv(out_path, index=False)

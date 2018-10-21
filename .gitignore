@@ -9,3 +9,6 @@
 
 # local records
 *.csv
+
+# local graph directory
+local_graphs/
