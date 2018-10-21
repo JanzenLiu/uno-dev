@@ -25,7 +25,7 @@ class PCGreedyPlayer(Player):
     def play_new_playable(self, new_playable, **info):
         return True
 
-    def _get_color(self):
+    def _get_color(self, **info):
         color_scores = {}
 
         for card in self.cards:

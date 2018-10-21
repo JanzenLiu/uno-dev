@@ -43,7 +43,7 @@ class HumanPlayer(Player):
                          checker=lambda x: x == 'y' or x == 'n',
                          constructor=lambda x: x == 'y')
 
-    def _get_color(self):
+    def _get_color(self, **info):
         msg = "{}\n{}".format(color_input_msg,
                               "# Your current cards: {}, total: {}".format(self.cards, self.num_cards))
         return get_input(msg,

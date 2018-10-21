@@ -18,5 +18,5 @@ class PCRandomPlayer(Player):
     def play_new_playable(self, new_playable, **info):
         return np.random.choice([True, False], p=self.probs_for_draw)
 
-    def _get_color(self):
+    def _get_color(self, **info):
         return np.random.choice([CardColor.RED, CardColor.GREEN, CardColor.BLUE, CardColor.YELLOW])

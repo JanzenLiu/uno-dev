@@ -188,11 +188,11 @@ class Player(object):
             self.logger("Has no playable cards or decides not to play.")
         return play
 
-    def _get_color(self):
+    def _get_color(self, **info):
         raise NotImplementedError
 
-    def get_color(self):
-        color = self._get_color()
+    def get_color(self, **info):
+        color = self._get_color(**info)
         assert isinstance(color, CardColor)
         self.logger("Selects color {}".format(color(color)))
         return color
