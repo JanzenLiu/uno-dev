@@ -1,3 +1,8 @@
+"""
+This script is used to collect data for "imitating" a GreedyPlayer
+"""
+
+
 import datetime
 import pickle
 import sys
