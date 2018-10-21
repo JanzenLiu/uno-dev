@@ -25,13 +25,14 @@ class PlayerType(Enum):
 
 
 class Player(object):
-    def __init__(self, ptype, name, idx, stream=True, filename=None, save_rewards=False):
+    def __init__(self, ptype, name, idx, stream=True, filename=None, save_rewards=False, save_actions=False):
         assert isinstance(ptype, PlayerType)
         assert isinstance(name, str)
         assert isinstance(idx, int) and idx >= 0
         assert isinstance(stream, bool)
         assert isinstance(filename, str) or filename is None
         assert isinstance(save_rewards, bool)
+        assert isinstance(save_actions, bool)
         self.type = ptype
         self.name = name
         self.idx = idx
@@ -45,7 +46,10 @@ class Player(object):
                                 stream=stream,
                                 filename=filename)
         self.save_rewards = save_rewards
+        self.save_actions = save_actions
         self.rewards = []
+        self.actions = []
+        self.current_round_actions = None
 
     def __repr__(self):
         return "{}({})".format(self.type.name, self.format_attribute())
@@ -117,6 +121,15 @@ class Player(object):
     def clear_cards(self):
         self.cards = []
 
+    def start_round(self):
+        # assume cards already cleared
+        self.current_round_actions = []
+
+    def end_round(self):
+        self.clear_cards()
+        self.actions.append(self.current_round_actions)
+        self.current_round_actions = None
+
     def play_card(self, index):
         assert 0 <= index < self.num_cards
         card = self.cards.pop(index)
@@ -162,6 +175,14 @@ class Player(object):
         assert isinstance(play, tuple) and len(play) == 2
         assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
         assert isinstance(play[1], Card)
+
+        # append actions
+        if self.save_actions:
+            index = playable_cards.index(play)
+            self.current_round_actions.append((info.get("play_state", None),
+                                               [card for i, card in playable_cards],
+                                               index))
+
         return play
 
     def check_new_card_playable(self, current_color, current_value, current_type, current_to_draw, new_card=None):
@@ -182,8 +203,14 @@ class Player(object):
         raise NotImplementedError
 
     def play_new_playable(self, new_playable, **info):
+        # print("FUCK!!!!!!")
         play = self._play_new_playable(new_playable, **info)
         assert isinstance(play, bool)
+
+        # append actions
+        if self.save_actions:
+            self.current_round_actions.append((info.get("play_state", None), new_playable, play))
+
         return play
 
     def get_play(self, current_color, current_value, current_type, current_to_draw, **info):
@@ -191,7 +218,13 @@ class Player(object):
         if len(playable_cards) == 0:
             play = None
         else:
-            play = self.get_play_from_playable(playable_cards, **info)
+            play_state = {
+                "color": current_color,
+                "value": current_value,
+                "type": current_type,
+                "to_draw": current_to_draw
+            }
+            play = self.get_play_from_playable(playable_cards, play_state=play_state, **info)
 
         if play is None:
             self.logger("Has no playable cards or decides not to play.")
@@ -204,6 +237,13 @@ class Player(object):
         color = self._get_color(**info)
         assert isinstance(color, CardColor)
         self.logger("Selects color {}".format(color(color)))
+
+        # append actions
+        if self.save_actions:
+            self.current_round_actions.append((info.get("play_state", None),
+                                               [card for card in self.cards],
+                                               color))
+
         return color
 
     def is_done(self):
