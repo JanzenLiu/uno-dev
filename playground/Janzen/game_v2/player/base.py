@@ -154,8 +154,15 @@ class Player(object):
     def get_playable(self, current_color, current_value, current_type, current_to_draw):
         return self.filter_draw_four(self._get_playable(current_color, current_value, current_type, current_to_draw))
 
-    def get_play_from_playable(self, playable_cards, **info):
+    def _get_play_from_playable(self, playable_cards, **info):
         raise NotImplementedError
+
+    def get_play_from_playable(self, playable_cards, **info):
+        play = self._get_play_from_playable(playable_cards, **info)
+        assert isinstance(play, tuple) and len(play) == 2
+        assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
+        assert isinstance(play[1], Card)
+        return play
 
     def check_new_card_playable(self, current_color, current_value, current_type, current_to_draw, new_card=None):
         if new_card is None:
@@ -185,9 +192,6 @@ class Player(object):
             play = None
         else:
             play = self.get_play_from_playable(playable_cards, **info)
-            assert isinstance(play, tuple) and len(play) == 2
-            assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
-            assert isinstance(play[1], Card)
 
         if play is None:
             self.logger("Has no playable cards or decides not to play.")

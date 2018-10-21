@@ -11,7 +11,7 @@ class PCRandomPlayer(Player):
                          stream=stream, filename=filename, save_rewards=save_rewards)
         self.probs_for_draw = [float(play_draw), float(1 - play_draw)]
 
-    def get_play_from_playable(self, playable_cards, **info):
+    def _get_play_from_playable(self, playable_cards, **info):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0
         return random.choice(playable_cards)
 

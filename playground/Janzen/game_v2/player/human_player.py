@@ -19,7 +19,7 @@ class HumanPlayer(Player):
     def is_human(self):
         return True
 
-    def get_play_from_playable(self, playable_cards, **info):
+    def _get_play_from_playable(self, playable_cards, **info):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0
         choice_dict = {index: card for index, card in playable_cards}
         choice_set = choice_dict.keys()
