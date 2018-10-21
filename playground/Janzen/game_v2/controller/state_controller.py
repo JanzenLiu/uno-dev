@@ -12,6 +12,15 @@ class StateController(Controller):
         self.current_type = None
         self.current_to_draw = 0
 
+    @property
+    def state_dict(self):
+        return {
+            "color": self.current_color,
+            "value": self.current_value,
+            "type": self.current_type,
+            "to_draw": self.current_to_draw
+        }
+
     def format_attribute(self):
         color = self.current_color
         return ", ".join([
