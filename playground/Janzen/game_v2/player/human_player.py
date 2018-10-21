@@ -34,7 +34,7 @@ class HumanPlayer(Player):
                          checker=lambda x: x in choice_set or x == -1,
                          constructor=lambda x: None if x == -1 else (x, choice_dict[x]))
 
-    def play_new_playable(self, new_playable, **info):
+    def _play_new_playable(self, new_playable, **info):
         assert isinstance(new_playable, Card)
         msg = "{}y) Yes, Play {}\nn) No".format(instant_play_msg, new_playable)
 

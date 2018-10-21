@@ -15,8 +15,8 @@ class PCRandomPlayer(Player):
         assert isinstance(playable_cards, list) and len(playable_cards) > 0
         return random.choice(playable_cards)
 
-    def play_new_playable(self, new_playable, **info):
-        return np.random.choice([True, False], p=self.probs_for_draw)
+    def _play_new_playable(self, new_playable, **info):
+        return bool(np.random.choice([True, False], p=self.probs_for_draw))  # to unify type
 
     def _get_color(self, **info):
         return np.random.choice([CardColor.RED, CardColor.GREEN, CardColor.BLUE, CardColor.YELLOW])

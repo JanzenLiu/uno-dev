@@ -171,8 +171,13 @@ class Player(object):
                     return False
             return True
 
-    def play_new_playable(self, new_playable, **info):
+    def _play_new_playable(self, new_playable, **info):
         raise NotImplementedError
+
+    def play_new_playable(self, new_playable, **info):
+        play = self._play_new_playable(new_playable, **info)
+        assert isinstance(play, bool)
+        return play
 
     def get_play(self, current_color, current_value, current_type, current_to_draw, **info):
         playable_cards = self.get_playable(current_color, current_value, current_type, current_to_draw)

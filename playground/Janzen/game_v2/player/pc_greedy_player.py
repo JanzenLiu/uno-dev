@@ -22,7 +22,7 @@ class PCGreedyPlayer(Player):
 
         return best_index, best_card
 
-    def play_new_playable(self, new_playable, **info):
+    def _play_new_playable(self, new_playable, **info):
         return True
 
     def _get_color(self, **info):
