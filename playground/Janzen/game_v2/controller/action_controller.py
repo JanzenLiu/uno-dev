@@ -70,7 +70,7 @@ class ActionController(Controller):
             self.logger("Applying penalty: 1 card...")
             card = self.give_player_card(player)
             if self.state_controller.check_new_card_playable(card, player):
-                if player.play_new_playable(card):
+                if player.play_new_playable(card, play_state=self.state_controller.state_dict):
                     self.logger("Can play!")
                     self.player_play_card(player, (player.num_cards - 1, card))
 
@@ -107,7 +107,7 @@ class ActionController(Controller):
             # the first player determine the current color and begin playing
             player = self.flow_controller.current_player
             assert isinstance(player, Player)
-            color = player.get_color()
+            color = player.get_color(play_state=self.state_controller.state_dict)
             self.state_controller.set_color(color)
             self.state_controller.set_value(-1)
 
@@ -184,6 +184,9 @@ class ActionController(Controller):
         self.logger("\n".join(msg))
 
     def run(self):
+        for player in self.players:
+            player.start_round()
+
         # Do the important thing for three times
         self.deck_controller.shuffle()
         self.deck_controller.shuffle()
@@ -228,5 +231,5 @@ class ActionController(Controller):
 
         self.logger("clearing cards for players...")
         for player in self.players:
-            player.clear_cards()
+            player.end_round()
         return player  # return winner
