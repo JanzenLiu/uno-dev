@@ -6,10 +6,14 @@
 
 # local scripts
 *_local.py
+*_local.ipynb
 
 # local records
 *.csv
 *.pkl
 
-# local graph directory
-local_graphs/
+# local model
+*.h5
+
+# directories for local stuff
+local_*/
