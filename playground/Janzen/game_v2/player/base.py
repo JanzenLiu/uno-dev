@@ -14,6 +14,7 @@ class PlayerType(Enum):
     PC_FIRST_CARD = 2
     PC_RANDOM = 3
     PC_GREEDY = 4
+    POLICY = 5
 
     @staticmethod
     def option_set():

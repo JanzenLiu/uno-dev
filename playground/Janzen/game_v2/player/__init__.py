@@ -3,6 +3,7 @@ from .human_player import HumanPlayer
 from .pc_first_card_player import PCFirstCardPlayer
 from .pc_random_player import PCRandomPlayer
 from .pc_greedy_player import PCGreedyPlayer
+from .policy_player import Policy, GreedyPolicy, PolicyPlayer
 
 
 def construct_player(player_type, *args, **kwargs):
@@ -15,6 +16,8 @@ def construct_player(player_type, *args, **kwargs):
         player = PCRandomPlayer(*args, **kwargs)
     elif player_type == PlayerType.PC_GREEDY:
         player = PCGreedyPlayer(*args, **kwargs)
+    elif player_type == PlayerType.POLICY:
+        player = PolicyPlayer(*args, **kwargs)
     else:
         raise Exception("Unknown Player Type Encountered while Creating Player")
 
