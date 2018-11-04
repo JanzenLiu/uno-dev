@@ -3,7 +3,7 @@ from .human_player import HumanPlayer
 from .pc_first_card_player import PCFirstCardPlayer
 from .pc_random_player import PCRandomPlayer
 from .pc_greedy_player import PCGreedyPlayer
-from .policy_player import Policy, GreedyPolicy, PolicyPlayer
+from .policy_player import PolicyPlayer
 
 
 def construct_player(player_type, *args, **kwargs):
