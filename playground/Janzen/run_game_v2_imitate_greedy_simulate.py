@@ -2,10 +2,8 @@ import pandas as pd
 import numpy as np
 import keras as ks
 import datetime
-import pickle
 import sys
 import re
-from sklearn.linear_model import LogisticRegression
 from scipy import sparse
 try:
     from .game_v2 import *
@@ -39,121 +37,92 @@ classes = data_cols[:54]
 num_data_cols = len(data_cols)
 
 
-class LRPolicy(Policy):
-    def __init__(self, name, model):
-        super().__init__(name)
+def lr_get_play(model, classmap, playable_cards, **info):
+    # =============
+    # preprocessing
+    # =============
+    row_dict = {}
 
-        with open(model, "rb") as f:
-            self.model = pickle.load(f)
-        assert isinstance(self.model, LogisticRegression)
-        self.name_to_index = {name: i for i, name in enumerate(self.model.classes_)}
+    play_state = info.get("play_state", None)
+    if play_state is not None:
+        row_dict["color_{}".format(play_state["color"].name)] = 1
+        row_dict["type_{}".format(play_state["type"].name)] = 1
+        row_dict["value_{}".format(int(play_state["value"]))] = 1
 
-    def get_play_from_playable(self, playable_cards, **info):
-        # =============
-        # preprocessing
-        # =============
-        row_dict = {}
+    for index, playable in playable_cards:
+        card_name = ansi_escape.sub('', str(playable))
+        row_dict[card_name] = row_dict.get(card_name, 0) + 1
 
-        play_state = info.get("play_state", None)
-        if play_state is not None:
-            row_dict["color_{}".format(play_state["color"].name)] = 1
-            row_dict["type_{}".format(play_state["type"].name)] = 1
-            row_dict["value_{}".format(int(play_state["value"]))] = 1
+    row_array = np.zeros((num_data_cols,), dtype=np.int64)
+    for i, data_col in enumerate(data_cols):
+        row_array[i] = row_dict.get(data_col, 0)
+    row_array = row_array.reshape((1, -1))
 
-        for index, playable in playable_cards:
-            card_name = ansi_escape.sub('', str(playable))
-            row_dict[card_name] = row_dict.get(card_name, 0) + 1
+    # ================
+    # model prediction
+    # ================
+    pred = model.predict(row_array)[0]
+    probs = model.predict_proba(row_array)[0]
 
-        row_array = np.zeros((num_data_cols,), dtype=np.int64)
-        for i, data_col in enumerate(data_cols):
-            row_array[i] = row_dict.get(data_col, 0)
-        row_array = row_array.reshape((1, -1))
+    # ==============
+    # postprocessing
+    # ==============
+    best_prob, best_play = 0, playable_cards[0]
+    for index, playable in playable_cards:
+        card_name = ansi_escape.sub('', str(playable))
+        if card_name == pred:
+            return index, playable
 
-        # ================
-        # model prediction
-        # ================
-        pred = self.model.predict(row_array)[0]
-        probs = self.model.predict_proba(row_array)[0]
-        best_prob, best_play = 0, playable_cards[0]
+        prob = probs[classmap[card_name]]
+        if prob > best_prob:
+            best_prob, best_play = prob, (index, playable)
 
-        # ==============
-        # postprocessing
-        # ==============
-        for index, playable in playable_cards:
-            card_name = ansi_escape.sub('', str(playable))
-            if card_name == pred:
-                return index, playable
-
-            prob = probs[self.name_to_index[card_name]]
-            if prob > best_prob:
-                best_prob, best_play = prob, (index, playable)
-
-        print("Prediction not in Playables!")
-        return best_play
-
-    def play_new_playable(self, new_playable, **info):
-        return GreedyPolicy.play_new_playable(new_playable, **info)
-
-    def get_color(self, **info):
-        return GreedyPolicy.get_color(**info)
+    print("Prediction not in Playables!")
+    return best_play
 
 
-class KerasPolicy(Policy):
-    def __init__(self, name, model):
-        super().__init__(name)
+def keras_get_play(model, classmap, playable_cards, **info):
+    # =============
+    # preprocessing
+    # =============
+    row_dict = {}
 
-        self.model = ks.models.load_model(model)
-        assert isinstance(self.model, ks.models.Model)
-        self.name_to_index = {name: i for i, name in enumerate(data_cols)}
+    play_state = info.get("play_state", None)
+    if play_state is not None:
+        row_dict["color_{}".format(play_state["color"].name)] = 1
+        row_dict["type_{}".format(play_state["type"].name)] = 1
+        row_dict["value_{}".format(int(play_state["value"]))] = 1
 
-    def get_play_from_playable(self, playable_cards, **info):
-        # =============
-        # preprocessing
-        # =============
-        row_dict = {}
+    for index, playable in playable_cards:
+        card_name = ansi_escape.sub('', str(playable))
+        row_dict[card_name] = row_dict.get(card_name, 0) + 1
 
-        play_state = info.get("play_state", None)
-        if play_state is not None:
-            row_dict["color_{}".format(play_state["color"].name)] = 1
-            row_dict["type_{}".format(play_state["type"].name)] = 1
-            row_dict["value_{}".format(int(play_state["value"]))] = 1
+    row_array = np.zeros((num_data_cols,), dtype=np.int64)
+    for i, data_col in enumerate(data_cols):
+        row_array[i] = row_dict.get(data_col, 0)
+    row_array = sparse.csr_matrix(row_array)
 
-        for index, playable in playable_cards:
-            card_name = ansi_escape.sub('', str(playable))
-            row_dict[card_name] = row_dict.get(card_name, 0) + 1
+    # ================
+    # model prediction
+    # ================
+    probs = model.predict(row_array)[0]
+    pred = classes[np.argmax(probs)]
+    best_prob, best_play = 0, playable_cards[0]
 
-        row_array = np.zeros((num_data_cols,), dtype=np.int64)
-        for i, data_col in enumerate(data_cols):
-            row_array[i] = row_dict.get(data_col, 0)
-        row_array = sparse.csr_matrix(row_array)
+    # ==============
+    # postprocessing
+    # ==============
+    for index, playable in playable_cards:
+        card_name = ansi_escape.sub('', str(playable))
+        if card_name == pred:
+            return index, playable
 
-        # ================
-        # model prediction
-        # ================
-        probs = self.model.predict(row_array)[0]
-        pred = classes[np.argmax(probs)]
-        best_prob, best_play = 0, playable_cards[0]
+        prob = probs[classmap[card_name]]
+        if prob > best_prob:
+            best_prob, best_play = prob, (index, playable)
 
-        # ==============
-        # postprocessing
-        # ==============
-        for index, playable in playable_cards:
-            card_name = ansi_escape.sub('', str(playable))
-            if card_name == pred:
-                return index, playable
-
-            prob = probs[self.name_to_index[card_name]]
-            if prob > best_prob:
-                best_prob, best_play = prob, (index, playable)
-
-        print("Prediction not in Playables!")
-        return best_play
-
-    def play_new_playable(self, new_playable, **info):
-        return GreedyPolicy.play_new_playable(new_playable, **info)
-
-    def get_color(self, **info):
-        return GreedyPolicy.get_color(**info)
+    print("Prediction not in Playables!")
+    return best_play
 
 
 if __name__ == "__main__":
@@ -161,8 +130,16 @@ if __name__ == "__main__":
     # target players
     # ==============
     target_players = [
-        (PlayerType.POLICY, "NN[16]_GREEDY", dict(policy=KerasPolicy("nn_policy", "nn[16]_getplay4M.h5"))),
-        (PlayerType.POLICY, "LR_GREEDY", dict(policy=LRPolicy("lr_policy", "lr_getplay4M.pkl"))),
+        (PlayerType.POLICY, "NN[16]_GREEDY", dict(get_play=KerasPolicy(name="nn_policy",
+                                                                       atype="get_play",
+                                                                       model="local_model/nn[16]_getplay4M.h5",
+                                                                       strategy=keras_get_play,
+                                                                       classmap={name: i
+                                                                                 for i, name in enumerate(data_cols)}))),
+        (PlayerType.POLICY, "LR_GREEDY", dict(get_play=LRPolicy(name="lr_policy",
+                                                                atype="get_play",
+                                                                model="local_model/lr_getplay4M.pkl",
+                                                                strategy=lr_get_play))),
     ]
     opponent_player = (PlayerType.PC_GREEDY, "NPC")
 
@@ -176,7 +153,7 @@ if __name__ == "__main__":
     # ===========
     # other setup
     # ===========
-    end_condition = GameEndCondition.ROUND_10000
+    end_condition = GameEndCondition.ROUND_100
 
     for target_player_tup in target_players:
         assert isinstance(target_player_tup, tuple)
