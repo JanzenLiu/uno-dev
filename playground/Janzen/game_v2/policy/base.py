@@ -90,6 +90,9 @@ class Policy(object):
         self.check_action(action)
         return action
 
+    def is_colluding_policy(self):
+        return False
+
 
 class ModelPolicy(Policy):
     def __init__(self, name, atype, model, strategy, classmap=None):
