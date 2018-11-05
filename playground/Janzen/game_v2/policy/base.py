@@ -85,7 +85,7 @@ class Policy(object):
     def _get_action(self, *args, **kwargs):
         return self.strategy(*args, **kwargs)
 
-    def get_aciton(self, *args, **kwargs):
+    def get_action(self, *args, **kwargs):
         action = self._get_action(*args, **kwargs)
         self.check_action(action)
         return action
