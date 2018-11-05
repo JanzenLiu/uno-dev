@@ -1,5 +1,5 @@
 from .base import PlayerType, Player
-from ..policy import ActionType, Policy, GreedyGetPlayPolicy, GreedyGetColorPolicy, GreedyPlayNewPolicy
+from ..policy import ActionType, Policy, GreedyGetPlayPolicy, GreedyGetColorPolicy, GreedyPlayNewPolicy, ColludingPolicy
 
 
 class PolicyPlayer(Player):
@@ -20,11 +20,15 @@ class PolicyPlayer(Player):
         self.get_color_policy = get_color
         self.play_new_policy = play_new
 
+        if self.get_play_policy.is_colluding_policy():
+            ColludingPolicy.add_player_to_colluding(self)
+
+
     def _get_play_from_playable(self, playable_cards, **info):
-        return self.get_play_policy.get_aciton(playable_cards=playable_cards, **info)
+        return self.get_play_policy.get_action(playable_cards=playable_cards, **info)
 
     def _play_new_playable(self, new_playable, **info):
-        return self.play_new_policy.get_aciton(new_playable=new_playable, **info)
+        return self.play_new_policy.get_action(new_playable=new_playable, **info)
 
     def _get_color(self, **info):
-        return self.get_color_policy.get_aciton(cards=self.cards, **info)
+        return self.get_color_policy.get_action(cards=self.cards, **info)
