@@ -107,6 +107,9 @@ class Player(object):
     def is_human(self):
         return False  # to override
 
+    def is_policy(self):
+        return False  # to be overriden by PolicyPlayer
+
     def get_card(self, card):
         assert isinstance(card, Card)
         self.cards.append(card)
@@ -204,7 +207,6 @@ class Player(object):
         raise NotImplementedError
 
     def play_new_playable(self, new_playable, **info):
-        # print("FUCK!!!!!!")
         play = self._play_new_playable(new_playable, **info)
         assert isinstance(play, bool)
 
