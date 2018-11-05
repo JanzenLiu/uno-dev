@@ -85,7 +85,8 @@ class StateController(Controller):
             flow_controller.add_skip()
 
         elif card.is_wildcard():
-            new_color = player.get_color(play_state=self.state_dict)
+            new_color = player.get_color(play_state=self.state_dict,
+                                         next_player=flow_controller.next_player())
             assert isinstance(new_color, CardColor)
 
         elif card.is_draw2():
@@ -93,7 +94,8 @@ class StateController(Controller):
             new_to_draw = self.current_to_draw + 2
 
         elif card.is_draw4():
-            new_color = player.get_color(play_state=self.state_dict)
+            new_color = player.get_color(play_state=self.state_dict,
+                                         next_player=flow_controller.next_player())
             new_to_draw = self.current_to_draw + 4
             assert isinstance(new_color, CardColor)
             # add log: color selected

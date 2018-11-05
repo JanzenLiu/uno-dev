@@ -20,15 +20,28 @@ class PolicyPlayer(Player):
         self.get_color_policy = get_color
         self.play_new_policy = play_new
 
-        if self.get_play_policy.is_colluding_policy():
-            ColludingPolicy.add_player_to_colluding(self)
+        if get_play.is_colluding_policy():
+            assert isinstance(get_play, ColludingPolicy)
+            get_play.add_player(self)
 
+        if get_color.is_colluding_policy():
+            assert isinstance(get_color, ColludingPolicy)
+            get_color.add_player(self)
+
+        if play_new.is_colluding_policy():
+            assert isinstance(play_new, ColludingPolicy)
+            play_new.add_player(self)
 
     def _get_play_from_playable(self, playable_cards, **info):
-        return self.get_play_policy.get_action(playable_cards=playable_cards, **info)
+        return self.get_play_policy.get_action(playable_cards=playable_cards,
+                                               num_cards_left=self.num_cards,
+                                               **info)
 
     def _play_new_playable(self, new_playable, **info):
         return self.play_new_policy.get_action(new_playable=new_playable, **info)
 
     def _get_color(self, **info):
         return self.get_color_policy.get_action(cards=self.cards, **info)
+
+    def is_policy(self):
+        return True

@@ -79,6 +79,13 @@ class FlowController(Controller):
         self.current_player = self.current_player_node.data
         self.clear_skip()
 
+    def next_player(self):
+        # regardless of skip, will only be called for ColludingPolicy
+        if self.clockwise:
+            return self.current_player_node.next_node.data
+        else:
+            return self.current_player_node.prev_node.data
+
     def is_player_done(self, player=None):
         if player is None:
             player = self.current_player

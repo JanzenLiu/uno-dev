@@ -107,7 +107,8 @@ class ActionController(Controller):
             # the first player determine the current color and begin playing
             player = self.flow_controller.current_player
             assert isinstance(player, Player)
-            color = player.get_color(play_state=self.state_controller.state_dict)
+            color = player.get_color(play_state=self.state_controller.state_dict,
+                                     next_player=self.flow_controller.next_player())
             self.state_controller.set_color(color)
             self.state_controller.set_value(-1)
 
@@ -208,7 +209,8 @@ class ActionController(Controller):
                 self.state_controller.current_color,
                 self.state_controller.current_value,
                 self.state_controller.current_type,
-                self.state_controller.current_to_draw
+                self.state_controller.current_to_draw,
+                next_player=self.flow_controller.next_player()
             )
             if play is not None:
                 self.player_play_card(player, play)
