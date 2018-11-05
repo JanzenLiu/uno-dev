@@ -67,4 +67,6 @@ if __name__ == "__main__":
             df = df.append(row, ignore_index=True)
             # *** END ***
 
+            print()
+
         df.to_csv(out_path, index=False)
