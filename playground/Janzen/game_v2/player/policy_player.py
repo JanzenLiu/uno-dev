@@ -32,6 +32,29 @@ class PolicyPlayer(Player):
             assert isinstance(play_new, ColludingPolicy)
             play_new.add_player(self)
 
+    def format_attribute(self, show_cards=False):
+        attr_strings = [
+            "name={}".format(self.name),
+            "pos={}".format(self.idx),
+            "cumulative_loss={}".format(self.cumulative_loss),
+            "cumulative_reward={}".format(self.cumulative_reward),
+            "num_cards={}".format(self.num_cards),
+            "get_play_policy={}".format(self.get_play_policy),
+            "get_color_policy={}".format(self.get_color_policy),
+            "play_new_policy={}".format(self.play_new_policy)
+        ]
+        if show_cards:
+            attr_strings.append("cards={}".format(self.cards))
+        return ", ".join(attr_strings)
+
+    def format_policy(self):
+        policy_strings = [
+            "get_play_policy={}".format(self.get_play_policy),
+            "get_color_policy={}".format(self.get_color_policy),
+            "play_new_policy={}".format(self.play_new_policy)
+        ]
+        return ", ".join(policy_strings)
+
     def _get_play_from_playable(self, playable_cards, **info):
         return self.get_play_policy.get_action(playable_cards=playable_cards,
                                                num_cards_left=self.num_cards,
