@@ -16,7 +16,7 @@ _avg_score = 1240 / 108
 
 
 # nc stands for neighbor collusion
-def _default_nc_get_play(playable_cards, next_player_cards, num_cards_left, **info):
+def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_left, **info):
     assert isinstance(num_cards_left, int) and num_cards_left > 0
     assert isinstance(playable_cards, list) and len(playable_cards) > 0
     assert isinstance(next_player_cards, list) and len(next_player_cards) > 0
@@ -77,7 +77,7 @@ def _default_nc_get_play(playable_cards, next_player_cards, num_cards_left, **in
     return best_play
 
 
-def _default_nc_get_color(next_player_cards, **info):
+def _default_nc_greedy_get_color(next_player_cards, **info):
     return greedy_get_color(cards=next_player_cards)
 
 
@@ -108,7 +108,7 @@ class ColludingPolicy(Policy):
 
 
 class NeighborColludingGetPlay(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_get_play, solo_strategy=greedy_get_play):
+    def __init__(self, name, strategy=_default_nc_greedy_get_play, solo_strategy=greedy_get_play):
         assert callable(solo_strategy)
         super().__init__(name, ActionType.GET_PLAY, strategy)
         self.solo_strategy = solo_strategy
@@ -122,7 +122,7 @@ class NeighborColludingGetPlay(ColludingPolicy):
 
 
 class NeighborColludingGetColor(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_get_color, solo_strategy=greedy_get_color):
+    def __init__(self, name, strategy=_default_nc_greedy_get_color, solo_strategy=greedy_get_color):
         assert callable(solo_strategy)
         super().__init__(name, ActionType.GET_COLOR, strategy)
         self.solo_strategy = solo_strategy
