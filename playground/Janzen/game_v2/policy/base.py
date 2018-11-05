@@ -47,9 +47,10 @@ class Policy(object):
 
     @staticmethod
     def _check_get_play_action(action):
-        assert isinstance(action, tuple) and len(action) == 2
-        assert isinstance(action[0], int) and action[0] >= 0
-        assert isinstance(action[1], Card)
+        if action is not None:
+            assert isinstance(action, tuple) and len(action) == 2
+            assert isinstance(action[0], int) and action[0] >= 0
+            assert isinstance(action[1], Card)
 
     @staticmethod
     def _check_get_color_action(action):

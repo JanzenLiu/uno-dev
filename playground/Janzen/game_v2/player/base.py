@@ -176,9 +176,10 @@ class Player(object):
 
     def get_play_from_playable(self, playable_cards, **info):
         play = self._get_play_from_playable(playable_cards, **info)
-        assert isinstance(play, tuple) and len(play) == 2
-        assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
-        assert isinstance(play[1], Card)
+        if play is not None:
+            assert isinstance(play, tuple) and len(play) == 2
+            assert isinstance(play[0], int) and 0 <= play[0] <= self.num_cards
+            assert isinstance(play[1], Card)
 
         # append actions
         if self.save_actions:
