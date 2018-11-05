@@ -26,7 +26,7 @@ def _default_nc_get_play(playable_cards, next_player_cards, num_cards_left, **in
         return playable_cards[0]
 
     best_play = None
-    best_score = - _avg_score
+    best_score = - 2 * _avg_score
 
     for index, card in playable_cards:
         assert isinstance(card, Card)
