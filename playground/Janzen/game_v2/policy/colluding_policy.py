@@ -1,7 +1,7 @@
 from .base import Policy, ActionType
 from .greedy_policy import greedy_get_play, greedy_get_color
 from ..player import Player
-from ..card import Card
+from ..card import Card, CardColor
 
 
 # number card: 4 * (1 * 0 + 2 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9)) = 360
@@ -100,6 +100,67 @@ def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_lef
 
 def _default_nc_greedy_get_color(next_player_cards, **info):
     return greedy_get_color(cards=next_player_cards)
+
+
+# ====================
+# first card collusion
+# ====================
+def _default_nc_first_card_get_play(playable_cards, next_player_cards, num_cards_left, **info):
+    assert isinstance(num_cards_left, int) and num_cards_left > 0
+    assert isinstance(playable_cards, list) and len(playable_cards) > 0
+    assert isinstance(next_player_cards, list) and len(next_player_cards) > 0
+
+    # only one card left and it's playable, so just play it, and then the team will win
+    if num_cards_left == 1:
+        return playable_cards[0]
+
+    selected_play = None
+    for index, card in playable_cards:
+        assert isinstance(card, Card)
+        # confirm whether next player can also play if this current card is played
+        if card.is_number():
+            next_player_playable_cards = [(i, next_card) for i, next_card in enumerate(next_player_cards)
+                                          if next_card.check_playable(card.color, card.num, card.card_type, 0)]
+            filtered_next_playable_cards = Player.filter_draw_four(next_player_playable_cards)
+            if len(filtered_next_playable_cards) > 0:
+                selected_play = index, card
+                break
+
+        elif card.is_wildcard():
+            selected_play = index, card
+            break
+
+    if selected_play is None:
+        # No card can allow next player to play too
+        selected_play = playable_cards[0]
+
+    return selected_play
+
+
+def _default_nc_first_card_get_color(next_player_cards, **info):
+    current_player_cards = info.get("cards", [])
+    current_first_color = None
+    colluding_first_color = None
+    for card in current_player_cards:
+        if card.color != CardColor.WILD:
+            if current_first_color is not None:
+                current_first_color = card.color
+            # TODO: refactor
+            if card.is_number():
+                # only number cards in this case allow next player to play
+                next_player_playable_cards = [(i, next_card) for i, next_card in enumerate(next_player_cards)
+                                              if next_card.check_playable(card.color, card.num, card.card_type, 0)]
+                filtered_next_playable_cards = Player.filter_draw_four(next_player_playable_cards)
+                if len(filtered_next_playable_cards) > 0:
+                    colluding_first_color = card.color
+                    break
+
+    if colluding_first_color is not None:
+        return colluding_first_color
+    elif current_first_color is not None:
+        return current_first_color
+    else:
+        return CardColor.RED
 
 
 class ColludingPolicy(Policy):
