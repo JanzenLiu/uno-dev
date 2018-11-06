@@ -87,12 +87,14 @@ def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_lef
             raise Exception("Unknown Card Type Encountered while Getting Collusion Play")
 
     # if current player does not play a card, and next player plays the card with highest score
-    play_state = info.get("play_state", [])
-    next_player_playable_cards = [(i, next_card) for i, next_card in enumerate(next_player_cards)
-                                  if next_card.check_playable(play_state["color"], play_state["value"], play_state["type"], play_state["to_draw"])]
-    filtered_best_next_score = get_best_score_from_raw_playable(next_player_playable_cards)
-    if -_avg_score + filtered_best_next_score > best_score:
-        best_play = None
+    if "play_state" in info:
+        play_state = info["play_state"]
+        next_player_playable_cards = [(i, next_card) for i, next_card in enumerate(next_player_cards)
+                                      if next_card.check_playable(play_state["color"], play_state["value"],
+                                                                  play_state["type"], play_state["to_draw"])]
+        filtered_best_next_score = get_best_score_from_raw_playable(next_player_playable_cards)
+        if -_avg_score + filtered_best_next_score > best_score:
+            best_play = None
     return best_play
 
 
