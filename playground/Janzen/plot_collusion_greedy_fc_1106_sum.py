@@ -42,7 +42,7 @@ def draw_csv_subplot(subplot, y_with_greedy_collusion, y_with_fc_collusion, y_wi
     subplot.plot(range(len(y_with_greedy_collusion)), y_with_greedy_collusion, marker="o", c="r", markersize=3)
     subplot.plot(range(len(y_with_fc_collusion)), y_with_fc_collusion, marker="o", c="g", markersize=3)
     subplot.plot(range(len(y_without_collusion)), y_without_collusion, marker="o", c="b", markersize=3)
-    subplot.set_title("@ {} Players".format(len(y_with_greedy_collusion) - 1), fontsize=8)
+    subplot.set_title("@ {} Players".format(len(y_with_greedy_collusion)), fontsize=8)
     subplot.xaxis.set_major_locator(MaxNLocator(integer=True))
 
 
