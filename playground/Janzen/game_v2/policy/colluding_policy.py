@@ -2,6 +2,7 @@ from .base import Policy, ActionType
 from .greedy_policy import greedy_get_play, greedy_get_color
 from ..player import Player
 from ..card import Card, CardColor
+import random
 
 
 # number card: 4 * (1 * 0 + 2 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9)) = 360
@@ -188,30 +189,45 @@ class ColludingPolicy(Policy):
     def is_colluding_policy(self):
         return True
 
+    @staticmethod
+    def keep_by_probability(next_player_cards, info_probability):
+        # helper function to adjust knowledge accessible by partner
+        # order of cards need to be preserved
+        total_num = len(next_player_cards)
+        kept_num = round(total_num * info_probability)
+        target_indices = random.sample(range(total_num), kept_num)
+        target_indices.sort()
+        available_cards = list(map(next_player_cards.__getitem__, target_indices))
+        return available_cards
+
 
 class NeighborColludingGetPlay(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_greedy_get_play, solo_strategy=greedy_get_play):
+    def __init__(self, name, strategy=_default_nc_greedy_get_play, solo_strategy=greedy_get_play, info_probability=1):
         assert callable(solo_strategy)
         super().__init__(name, ActionType.GET_PLAY, strategy)
         self.solo_strategy = solo_strategy
+        self.info_probability = info_probability  # if 1, full knowledge
 
     def _get_action(self, next_player=None, *args, **kwargs):
         assert isinstance(next_player, Player) or next_player is None
-        if self.is_player_in(next_player):
-            return self.strategy(next_player_cards=next_player.cards, *args, **kwargs)
+        available_next_player_cards = ColludingPolicy.keep_by_probability(next_player.cards, self.info_probability)
+        if self.is_player_in(next_player) and len(available_next_player_cards) > 0:
+            return self.strategy(next_player_cards=available_next_player_cards, *args, **kwargs)
         else:
             return self.solo_strategy(*args, **kwargs)
 
 
 class NeighborColludingGetColor(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_greedy_get_color, solo_strategy=greedy_get_color):
+    def __init__(self, name, strategy=_default_nc_greedy_get_color, solo_strategy=greedy_get_color, info_probability=1):
         assert callable(solo_strategy)
         super().__init__(name, ActionType.GET_COLOR, strategy)
         self.solo_strategy = solo_strategy
+        self.info_probability = info_probability  # if 1, full knowledge
 
     def _get_action(self, next_player=None, *args, **kwargs):
         assert isinstance(next_player, Player) or next_player is None
-        if self.is_player_in(next_player):
-            return self.strategy(next_player_cards=next_player.cards, *args, **kwargs)
+        available_next_player_cards = ColludingPolicy.keep_by_probability(next_player.cards, self.info_probability)
+        if self.is_player_in(next_player) and len(available_next_player_cards) > 0:
+            return self.strategy(next_player_cards=available_next_player_cards, *args, **kwargs)
         else:
             return self.solo_strategy(*args, **kwargs)
