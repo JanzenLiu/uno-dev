@@ -48,12 +48,12 @@ def draw_csv_subplot(subplot, y_with_greedy_collusion, y_with_fc_collusion, y_wi
 
 def adjust_figure(fig, ax, title, save_fig_name):
     fig.suptitle(title, fontsize=14)
-    fig.tight_layout()
-    fig.subplots_adjust(top=0.85)
     fig.delaxes(ax[2][2])
-    fig.savefig(save_fig_name)
     fig.legend(['Greedy Collusion', 'First Card Collusion', 'No Collusion'], bbox_to_anchor=(1, 0.315))
     ax[2][1].set_xlabel('index of the first player in the pair', position=(0.5, 0.5))
+    fig.tight_layout()
+    fig.subplots_adjust(top=0.87)
+    fig.savefig(save_fig_name)
 
 
 if __name__ == "__main__":
@@ -98,7 +98,7 @@ if __name__ == "__main__":
         draw_csv_subplot(subplot_reward, sum_rewards_with_greedy_collusion, sum_rewards_with_fc_collusion,
                          sum_rewards_without_collusion)
 
-    adjust_figure(f_wr, ax_wr, "Greedy Collusion Sum Winning Rate",
+    adjust_figure(f_wr, ax_wr, "Collusion Sum Winning Rate",
                   "{}/{}_wr.pdf".format(dir_name, "sum_winning_rate_20181106"))
-    adjust_figure(f_reward, ax_reward, "Greedy Collusion Sum Cumulative Reward",
+    adjust_figure(f_reward, ax_reward, "Collusion Sum Cumulative Reward",
                   "{}/{}_reward.pdf".format(dir_name, "sum_reward_20181106"))
