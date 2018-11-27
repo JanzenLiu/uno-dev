@@ -58,13 +58,14 @@ class PolicyPlayer(Player):
     def _get_play_from_playable(self, playable_cards, **info):
         return self.get_play_policy.get_action(playable_cards=playable_cards,
                                                num_cards_left=self.num_cards,
+                                               current_player=self,
                                                **info)
 
     def _play_new_playable(self, new_playable, **info):
-        return self.play_new_policy.get_action(new_playable=new_playable, **info)
+        return self.play_new_policy.get_action(new_playable=new_playable, current_player=self, **info)
 
     def _get_color(self, **info):
-        return self.get_color_policy.get_action(cards=self.cards, **info)
+        return self.get_color_policy.get_action(cards=self.cards, current_player=self, **info)
 
     def is_policy(self):
         return True

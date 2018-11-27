@@ -37,15 +37,11 @@ def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_lef
         return playable_cards[0]
 
     best_play = None
-    best_score = - 2 * _avg_score
+    best_score = - 2 * _avg_score  # the case neither the current player and the partner play any cards
 
     for index, card in playable_cards:
         assert isinstance(card, Card)
         if card.is_number():
-            # this will be the best play if the partner has no valid cards to play
-            best_play = index, card
-            best_score = card.score - _avg_score
-
             # then see whether the partner has valid cards to play in actuality
             next_player_playable_cards = [(i, next_card) for i, next_card in enumerate(next_player_cards)
                                           if next_card.check_playable(card.color, card.num, card.card_type, 0)]
@@ -56,6 +52,7 @@ def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_lef
                 best_score = score
 
         elif card.is_reverse() or card.is_skip():
+            # TODO: to refine
             if card.score > best_score:
                 best_play = index, card
                 best_score = card.score
@@ -100,6 +97,58 @@ def _default_nc_greedy_get_play(playable_cards, next_player_cards, num_cards_lef
 
 def _default_nc_greedy_get_color(next_player_cards, **info):
     return greedy_get_color(cards=next_player_cards)
+
+
+def _default_nnc_greedy_get_play(playable_cards, num_cards_left, next_partner_cards, **info):
+    assert isinstance(num_cards_left, int) and num_cards_left > 0
+    assert isinstance(playable_cards, list) and len(playable_cards) > 0
+    assert isinstance(next_partner_cards, list) and len(next_partner_cards) > 0
+
+    # only one card left and it's playable, so just play it, and then the team will win
+    if num_cards_left    == 1:
+        return playable_cards[0]
+
+    best_play = None
+    best_score = - 2 * _avg_score  # the case neither the current player and the partner play any cards
+
+    for index, card in playable_cards:
+        assert isinstance(card, Card)
+        if card.is_number() or card.is_reverse() or card.is_skip() or card.is_draw2():
+            # then see whether the partner has valid cards to play in actuality
+            # for non-neighboring case, simply checking color is enough
+            next_partner_playable_cards = [(i, next_card) for i, next_card in enumerate(next_partner_cards)
+                                           if next_card.color == card.color or next_card.is_strong_action()]
+            filtered_best_next_score = get_best_score_from_raw_playable(next_partner_playable_cards)
+            score = card.score + filtered_best_next_score
+            if score > best_score:
+                best_play = index, card
+                best_score = score
+
+        elif card.is_wildcard() or card.is_draw4():
+            next_partner_cards_with_index = [(i, next_card) for i, next_card in enumerate(next_partner_cards)]
+            filtered_best_next_score = get_best_score_from_raw_playable(next_partner_cards_with_index)
+            score = card.score + filtered_best_next_score
+            if score > best_score:
+                best_play = index, card
+                best_score = score
+
+        else:
+            # raise Error
+            raise Exception("Unknown Card Type Encountered while Getting Collusion Play")
+
+    # if current player does not play a card, and next player plays the card with highest score
+    if "play_state" in info:
+        play_state = info["play_state"]
+        next_partner_playable_cards = [(i, next_card) for i, next_card in enumerate(next_partner_cards)
+                                       if next_card.color == play_state["color"] or next_card.is_strong_action()]
+        filtered_best_next_score = get_best_score_from_raw_playable(next_partner_playable_cards)
+        if -_avg_score + filtered_best_next_score > best_score:
+            best_play = None
+    return best_play
+
+
+def _default_nnc_greedy_get_color(next_partner_cards, **info):
+    return greedy_get_color(cards=next_partner_cards)
 
 
 # ====================
@@ -188,30 +237,42 @@ class ColludingPolicy(Policy):
     def is_colluding_policy(self):
         return True
 
+    def get_partner(self, exclude=None):
+        assert isinstance(exclude, Player) or exclude is None
+        return [player for player in self.players if player != exclude]
+
 
 class NeighborColludingGetPlay(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_greedy_get_play, solo_strategy=greedy_get_play):
-        assert callable(solo_strategy)
+    def __init__(self, name, strategy=_default_nc_greedy_get_play, nn_strategy=_default_nnc_greedy_get_play):
+        # nn stands for non-neighbor
+        assert callable(nn_strategy)
         super().__init__(name, ActionType.GET_PLAY, strategy)
-        self.solo_strategy = solo_strategy
+        self.nn_strategy = nn_strategy
 
-    def _get_action(self, next_player=None, *args, **kwargs):
+    def _get_action(self, current_player=None, next_player=None, *args, **kwargs):
+        assert isinstance(current_player, Player) or current_player is None
         assert isinstance(next_player, Player) or next_player is None
         if self.is_player_in(next_player):
             return self.strategy(next_player_cards=next_player.cards, *args, **kwargs)
         else:
-            return self.solo_strategy(*args, **kwargs)
+            # assume only two colluding players so far, so only one partner
+            partner = list(self.get_partner(exclude=current_player))[0]
+            return self.nn_strategy(next_partner_cards=partner.cards, *args, **kwargs)
 
 
 class NeighborColludingGetColor(ColludingPolicy):
-    def __init__(self, name, strategy=_default_nc_greedy_get_color, solo_strategy=greedy_get_color):
-        assert callable(solo_strategy)
+    def __init__(self, name, strategy=_default_nc_greedy_get_color, nn_strategy=_default_nnc_greedy_get_color):
+        # nn stands for non-neighbor
+        assert callable(nn_strategy)
         super().__init__(name, ActionType.GET_COLOR, strategy)
-        self.solo_strategy = solo_strategy
+        self.nn_strategy = nn_strategy
 
-    def _get_action(self, next_player=None, *args, **kwargs):
+    def _get_action(self, current_player=None, next_player=None, *args, **kwargs):
+        assert isinstance(current_player, Player) or current_player is None
         assert isinstance(next_player, Player) or next_player is None
         if self.is_player_in(next_player):
             return self.strategy(next_player_cards=next_player.cards, *args, **kwargs)
         else:
-            return self.solo_strategy(*args, **kwargs)
+            # assume only two colluding players so far, so only one partner
+            partner = list(self.get_partner(exclude=current_player))[0]
+            return self.nn_strategy(next_partner_cards=partner.cards, *args, **kwargs)

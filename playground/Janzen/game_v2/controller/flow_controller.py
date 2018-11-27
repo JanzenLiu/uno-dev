@@ -79,12 +79,19 @@ class FlowController(Controller):
         self.current_player = self.current_player_node.data
         self.clear_skip()
 
-    def next_player(self):
-        # regardless of skip, will only be called for ColludingPolicy
-        if self.clockwise:
-            return self.current_player_node.next_node.data
+    def next_player(self, dist=1, reverse=False):
+        assert isinstance(dist, int) and dist > 0
+        clockwise = (self.clockwise != reverse)  # XOR
+        next_xstep_player_node = self.current_player_node
+
+        if clockwise:
+            for _ in range(dist):
+                next_xstep_player_node = next_xstep_player_node.next_node
         else:
-            return self.current_player_node.prev_node.data
+            for _ in range(dist):
+                next_xstep_player_node = next_xstep_player_node.prev_node
+                
+        return next_xstep_player_node.data
 
     def is_player_done(self, player=None):
         if player is None:
