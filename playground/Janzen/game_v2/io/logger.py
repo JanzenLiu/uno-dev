@@ -10,6 +10,7 @@ class UnoLogger(logging.Logger):
         assert isinstance(name, str) and len(name) > 0
         super().__init__(name, logging.INFO)
         self.color = color
+        self.label = "{}[{}]{}".format(self.color, name, Style.RESET_ALL)
 
         formatter = logging.Formatter("{}[%(name)s]{} %(message)s".format(self.color, Style.RESET_ALL))
 

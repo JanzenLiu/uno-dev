@@ -1,4 +1,5 @@
 import time
+import tqdm
 from enum import Enum, unique
 from .player import PlayerType, Player, construct_player
 from .card import Card, make_standard_deck
@@ -44,7 +45,8 @@ pname_input_err = "Sorry, Your Input is Invalid, Try Again."
 
 
 class Game(object):
-    def __init__(self, cards=None, players=None, end_condition=GameEndCondition.ROUND_1, interval=1, verbose=True):
+    def __init__(self, cards=None, players=None, end_condition=GameEndCondition.ROUND_1, interval=1,
+                 verbose=True, demo=0):
         assert isinstance(end_condition, GameEndCondition)
         assert isinstance(interval, (int, float)) or interval > 0
         assert isinstance(verbose, bool)
@@ -72,6 +74,8 @@ class Game(object):
         # set timer
         self.last_start_time = -1
         self.last_end_time = -1
+
+        self.demo = demo
 
     @staticmethod
     def get_num_players():
@@ -224,13 +228,22 @@ class Game(object):
     def run(self):
         self.last_start_time = time.time()
 
-        while not self.is_end():
-            self.action_controller = ActionController(self.cards,
-                                                      self.players,
-                                                      interval=self.interval,
-                                                      stream=self.verbose)
-            self.action_controller.run()
-            self.num_rounds_played += 1
+        if self.demo == 0:
+            while not self.is_end():
+                self.action_controller = ActionController(self.cards,
+                                                          self.players,
+                                                          interval=self.interval,
+                                                          stream=self.verbose)
+                self.action_controller.run()
+                self.num_rounds_played += 1
+        else:
+            for _ in tqdm.tqdm(range(self.demo), desc=self.logger.label + " "):
+                self.action_controller = ActionController(self.cards,
+                                                          self.players,
+                                                          interval=self.interval,
+                                                          stream=self.verbose)
+                self.action_controller.run()
+                self.num_rounds_played += 1
 
         self.last_end_time = time.time()
         self.logger("Game over after {} rounds".format(self.num_rounds_played))
