@@ -123,7 +123,7 @@ if __name__ == "__main__":
     # initialize logger
     log_id = kwargs.pop('log_id')
     assert log_id < 1000
-    filename = 'env-v1-dqn-{:0>3}.log'.format(log_id)
+    filename = 'env-v1-dqn-{:0>3}-local.log'.format(log_id)
     logger = logging.Logger("DQNLogger")
     sh = logging.StreamHandler()
     fh = logging.FileHandler(filename)
