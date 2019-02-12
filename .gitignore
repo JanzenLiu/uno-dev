@@ -6,6 +6,7 @@
 
 # local stuff
 *_local.*
+*-local.*
 
 # local records
 *.csv
