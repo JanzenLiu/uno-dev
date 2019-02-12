@@ -106,8 +106,9 @@ if __name__ == "__main__":
     EPISODES = 10000
 
     # parse arguments
+    # example: `python3 run_game_v2_env_v1_dqn.py -n 64 64 -i 5`
     parser = argparse.ArgumentParser()
-    parser.add_argument('--hidden_sizes', nargs='*', type=int, default=[])
+    parser.add_argument('--hidden_sizes', '-n', nargs='*', type=int, default=[])
     parser.add_argument('--discount_factor', type=float, default=0.99)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--batch_size', type=int, default=256)
