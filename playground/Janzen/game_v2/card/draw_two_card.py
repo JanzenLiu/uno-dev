@@ -4,6 +4,7 @@ from .base import CardType, WeakActionCard
 class DrawTwoCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.DRAW_2, color)
+        self.short_name = "D2({})".format(self.color.name[0])
 
     def is_draw2(self):
         return True

@@ -60,6 +60,7 @@ class Card(object):
         self.card_type = card_type
         self.color = color
         self.score = score
+        self.short_name = None  # to be overriden
 
     def __repr__(self):
         return self.color("{}({})".format(type(self).__name__, self.format_attribute()))

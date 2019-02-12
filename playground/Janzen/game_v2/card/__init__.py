@@ -22,3 +22,15 @@ def make_standard_deck():
         [WildCard() for _ in range(4)],  # 4 x Wildcard
         [DrawFourCard() for _ in range(4)]  # 4 x Draw4
     ))
+
+
+def make_standard_unique_deck():
+    return list(itertools.chain(
+        list(itertools.chain(  # for each color
+            *(list(itertools.chain(
+                [NumberCard(color, num) for num in range(0, 10)],  # 1 x Number [0-9]
+                [ReverseCard(color), SkipCard(color), DrawTwoCard(color)],  # 1 x (Reverse + Skip + Draw2)
+                )) for color in CardColor if color != CardColor.WILD)
+        )),
+        [WildCard(), DrawFourCard()],  # 1 x (Wildcard + Draw4)
+    ))

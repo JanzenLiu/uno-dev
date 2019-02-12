@@ -4,6 +4,7 @@ from .base import CardType, WeakActionCard
 class SkipCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.SKIP, color)
+        self.short_name = "S({})".format(self.color.name[0])
 
     def is_skip(self):
         return True

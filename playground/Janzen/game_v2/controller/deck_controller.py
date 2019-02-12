@@ -42,13 +42,14 @@ class DeckController(Controller):
         assert self.draw_pile_size == 0  # only enable regeneration of draw pile while it is run out
         self.logger("Regenerating the draw pile...")
 
-        if self.used_pile_size > 0:
+        # when there are only a few cards left, there might cause a infinitely looping situation
+        if self.used_pile_size > 10:
             self.draw_pile = self.used_pile
             self.used_pile = []
             self.shuffle()
         else:
             self.add_deck()  # cards run out, need to add one deck
-        self.logger("Done. New draw pilie size: {}".format(self.draw_pile_size))
+        self.logger("Done. New draw pile size: {}".format(self.draw_pile_size))
 
     def add_deck(self):
         self.logger("Adding one deck to the draw pile...")

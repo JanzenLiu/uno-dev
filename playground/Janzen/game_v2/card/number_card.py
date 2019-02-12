@@ -7,6 +7,7 @@ class NumberCard(Card):
         assert isinstance(num, int) and 0 <= num <= 9
         super().__init__(CardType.NUMBER, color, num)
         self.num = num
+        self.short_name = "N({}{})".format(self.color.name[0], self.num)
 
     def format_attribute(self):
         return "{}, {}".format(self.color.name, self.num)

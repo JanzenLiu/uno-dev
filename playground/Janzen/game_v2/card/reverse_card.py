@@ -4,6 +4,7 @@ from .base import CardType, WeakActionCard
 class ReverseCard(WeakActionCard):
     def __init__(self, color):
         super().__init__(CardType.REVERSE, color)
+        self.short_name = "R({})".format(self.color.name[0])
 
     def is_reverse(self):
         return True

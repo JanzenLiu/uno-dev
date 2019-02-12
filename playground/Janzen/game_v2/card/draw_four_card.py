@@ -4,6 +4,7 @@ from .base import CardType, StrongActionCard
 class DrawFourCard(StrongActionCard):
     def __init__(self):
         super().__init__(CardType.DRAW_4)
+        self.short_name = "D4()"
 
     def is_draw4(self):
         return True

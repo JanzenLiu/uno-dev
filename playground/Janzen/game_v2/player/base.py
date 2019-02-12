@@ -127,12 +127,14 @@ class Player(object):
 
     def start_round(self):
         # assume cards already cleared
-        self.current_round_actions = []
+        if self.save_actions:
+            self.current_round_actions = []
 
     def end_round(self):
         self.clear_cards()
-        self.actions.append(self.current_round_actions)
-        self.current_round_actions = None
+        if self.save_actions:
+            self.actions.append(self.current_round_actions)
+            self.current_round_actions = None
 
     def play_card(self, index):
         assert 0 <= index < self.num_cards

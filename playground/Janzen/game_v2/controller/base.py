@@ -10,6 +10,8 @@ class Controller(object):
     def __init__(self, stream=True, filename=None):
         assert isinstance(stream, bool)
         assert filename is None or isinstance(filename, str)
+        self.stream = stream
+        self.filename = filename
         self.logger = UnoLogger(name=type(self).__name__,
                                 color=Fore.LIGHTCYAN_EX,
                                 stream=stream,
