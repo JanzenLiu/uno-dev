@@ -4,9 +4,8 @@
 *.pyc
 *.pyo
 
-# local scripts
-*_local.py
-*_local.ipynb
+# local stuff
+*_local.*
 
 # local records
 *.csv
