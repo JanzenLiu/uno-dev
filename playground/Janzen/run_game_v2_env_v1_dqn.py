@@ -16,9 +16,9 @@ import argparse
 class DQNAgent:
     def __init__(self, state_size, action_size, hidden_sizes,
                  discount_factor=0.99, learning_rate=0.001,  # 0.99, 0.001 originally
-                 batch_size=256, train_start=100, fix_q_start=0,
+                 batch_size=64, train_start=100, fix_q_start=0,
                  epsilon=1.0, epsilon_min=0.005, epsilon_steps=50000,  # 1.0, 0.005, 50000
-                 memory_size=10000):
+                 memory_size=1000):
 
         self.state_size = state_size
         self.action_size = action_size
@@ -95,16 +95,17 @@ class DQNAgent:
 
         self.model.fit(update_input, update_target, batch_size=batch_size, epochs=1, verbose=0)
 
-    def load_model(self, name):
+    def load_weights(self, name):
         self.model.load_weights(name)
 
-    def save_model(self, name):
+    def save_weights(self, name):
         self.model.save_weights(name)
+
+    def save_model(self, name):
+        self.model.save(name)
 
 
 if __name__ == "__main__":
-    EPISODES = 10000
-
     # parse arguments
     # example: `python3 run_game_v2_env_v1_dqn.py -n 64 64 -i 5`
     parser = argparse.ArgumentParser()
@@ -118,8 +119,11 @@ if __name__ == "__main__":
     parser.add_argument('--epsilon_min', type=float, default=0.005)
     parser.add_argument('--epsilon_steps', type=int, default=50000)
     parser.add_argument('--log_id', '-i', type=int, required=True)
+    parser.add_argument('--episodes', type=int, default=10000)
     args = parser.parse_args()
     kwargs = dict(args._get_kwargs())
+
+    episodes = kwargs.pop('episodes')
 
     # initialize logger
     log_id = kwargs.pop('log_id')
@@ -141,7 +145,7 @@ if __name__ == "__main__":
     action_size = env.action_space_dim
     agent = DQNAgent(state_size, action_size, **kwargs)
 
-    for i in range(EPISODES):
+    for i in range(episodes):
         state, done = env.reset()
         reward = 0
 
@@ -161,5 +165,8 @@ if __name__ == "__main__":
 
     env.end_round()
 
-    logger.info("win rate: {}, avg reward: {}".format(env.players[0].num_wins / EPISODES,
-                                                      env.players[0].cumulative_reward / EPISODES))
+    logger.info("win rate: {}, avg reward: {}".format(env.players[0].num_wins / episodes,
+                                                      env.players[0].cumulative_reward / episodes))
+
+    model_path = 'env-v1-dqn-{:0>3}-local.h5'.format(log_id)
+    agent.save_model(model_path)
