@@ -24,7 +24,7 @@ def first_two_greedy_get_color(**info):
     cards = info.get("cards", [])
 
     color_counter = 0
-    for card in cards and color_counter < 2:
+    for card in cards:
         if not card.is_strong_action():
             color = card.color
             score = card.score
@@ -33,6 +33,8 @@ def first_two_greedy_get_color(**info):
                 color_scores[color] = score
             else:
                 color_scores[color] += score
+        if color_counter == 2:
+            break
 
     if len(color_scores) > 0:
         best_color = sorted(color_scores.items(), key=lambda x: x[1], reverse=True)[0][0]
