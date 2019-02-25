@@ -5,6 +5,7 @@ from .first_card_policy import first_card_get_play, first_card_get_color
 
 
 def probabilistic_fc_or_greedy_get_play(playable_cards, **info):
+    assert isinstance(playable_cards, list) and len(playable_cards) > 0
     fc_prob = info.get("fc_prob", 0.5)
     return choice([first_card_get_play, greedy_get_play], p=[fc_prob, 1-fc_prob])(playable_cards, **info)
 
