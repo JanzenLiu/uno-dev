@@ -230,6 +230,7 @@ class Game(object):
 
         if self.demo == 0:
             while not self.is_end():
+                # print("round {}".format(self.num_rounds_played+1))
                 self.action_controller = ActionController(self.cards,
                                                           self.players,
                                                           interval=self.interval,
@@ -237,6 +238,8 @@ class Game(object):
                                                           num_rounds_played=self.num_rounds_played)
                 self.action_controller.run()
                 self.num_rounds_played += 1
+                # for player in self.players:
+                #     print(player.cumulative_reward)
         else:
             for _ in tqdm.tqdm(range(self.demo), desc=self.logger.label + " "):
                 self.action_controller = ActionController(self.cards,

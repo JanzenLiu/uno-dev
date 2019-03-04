@@ -32,7 +32,10 @@ def dqn_get_play(model, classmap, playable_cards, **info):
     state[play_state["type"].value + 16] = 1  # type(dim=6),   #16 - #21
 
     # flow state(dim=2): clockwise(dim=2)
-    state[int(info.get("clockwise", None)) + 22] = 1  # #22 - #23
+    # state[int(info.get("clockwise", None)) + 22] = 1  # #22 - #23
+    clockwise = info.get("clockwise", None)
+    if clockwise is not None:
+        state[int(clockwise) + 22] = 1
 
     # player state(dim=110): cards(dim=54) in hand, number of them(dim=1) and valid actions can play(dim=55)
     player = info.get("current_player", None)
@@ -81,7 +84,7 @@ if __name__ == "__main__":
                                   model="env-v6-dqn-002-local.h5",
                                   strategy=dqn_get_play, classmap=action_map))
     )
-    opponent_player = (PlayerType.PC_GREEDY, "NPC")
+    opponent_player = (PlayerType.PC_RANDOM, "NPC", dict(play_draw=0))
 
     # ===================
     # records preparation

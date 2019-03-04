@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # records preparation
     # ===================
     final_csv_name = "simulation_10000rounds_{}".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
-    out_path = "{}.csv".format(final_csv_name)
+    out_path = "local_result/{}.csv".format(final_csv_name)
     cols = ["player_type", "player_params", "num_players", "pos", "num_wins", "cum_reward"]
     df = pd.DataFrame(columns=cols)  # keep the records
 
