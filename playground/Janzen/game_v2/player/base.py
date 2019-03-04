@@ -231,6 +231,13 @@ class Player(object):
                 "to_draw": current_to_draw
             }
             play = self.get_play_from_playable(playable_cards, play_state=play_state, **info)
+            if self.type != PlayerType.PC_RANDOM:
+                playables_df = info.get("playables_df", None)
+                clockwise = info.get("clockwise", None)
+                next_player = info.get("next_player", None)
+                # playables_cols = ["play_state", "clockwise", "current_player", "num_cards_left", "next_player",
+                #                   "playable_cards", "chosen"]
+                playables_df.loc[len(playables_df)] = [play_state, clockwise, self, self.num_cards, next_player, playable_cards, play] # add rows in place
 
         if play is None:
             self.logger("Has no playable cards or decides not to play.")

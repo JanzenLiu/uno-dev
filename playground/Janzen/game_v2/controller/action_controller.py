@@ -11,7 +11,8 @@ class ActionController(Controller):
 
     horizontal_rule_len = 60
 
-    def __init__(self, cards, players, num_first_hand=7, clockwise=True, interval=1, stream=True, filename=None, num_rounds_played=-1):
+    def __init__(self, cards, players, num_first_hand=7, clockwise=True, interval=1, stream=True, filename=None, num_rounds_played=-1,
+                 playables_df=None, playables_cols=[]):
         assert isinstance(cards, list)
         assert isinstance(players, list)
         assert isinstance(num_first_hand, int) and 1 <= num_first_hand <= (len(cards) - 1) / len(players)
@@ -24,6 +25,8 @@ class ActionController(Controller):
         self.num_first_hand = num_first_hand
         self.interval = interval
         self.num_rounds_played = num_rounds_played
+        self.playables_df = playables_df
+        self.playables_cols = playables_cols
 
     def format_attribute(self):
         return ", ".join([
@@ -213,7 +216,9 @@ class ActionController(Controller):
                 self.state_controller.current_type,
                 self.state_controller.current_to_draw,
                 next_player=self.flow_controller.next_player(),
-                num_rounds_played = self.num_rounds_played
+                num_rounds_played = self.num_rounds_played,
+                playables_df = self.playables_df,
+                clockwise = self.flow_controller.clockwise,
             )
             if play is not None:
                 self.player_play_card(player, play)

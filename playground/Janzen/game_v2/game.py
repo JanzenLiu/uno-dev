@@ -46,7 +46,7 @@ pname_input_err = "Sorry, Your Input is Invalid, Try Again."
 
 class Game(object):
     def __init__(self, cards=None, players=None, end_condition=GameEndCondition.ROUND_1, interval=1,
-                 verbose=True, demo=0):
+                 verbose=True, demo=0, playables_df=None, playables_cols=[]):
         assert isinstance(end_condition, GameEndCondition)
         assert isinstance(interval, (int, float)) or interval > 0
         assert isinstance(verbose, bool)
@@ -76,6 +76,8 @@ class Game(object):
         self.last_end_time = -1
 
         self.demo = demo
+        self.playables_df = playables_df
+        self.playables_cols = playables_cols
 
     @staticmethod
     def get_num_players():
@@ -235,7 +237,9 @@ class Game(object):
                                                           self.players,
                                                           interval=self.interval,
                                                           stream=self.verbose,
-                                                          num_rounds_played=self.num_rounds_played)
+                                                          num_rounds_played=self.num_rounds_played,
+                                                          playables_df=self.playables_df,
+                                                          playables_cols=self.playables_cols)
                 self.action_controller.run()
                 self.num_rounds_played += 1
                 # for player in self.players:
