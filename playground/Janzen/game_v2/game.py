@@ -233,7 +233,8 @@ class Game(object):
                 self.action_controller = ActionController(self.cards,
                                                           self.players,
                                                           interval=self.interval,
-                                                          stream=self.verbose)
+                                                          stream=self.verbose,
+                                                          num_rounds_played=self.num_rounds_played)
                 self.action_controller.run()
                 self.num_rounds_played += 1
         else:

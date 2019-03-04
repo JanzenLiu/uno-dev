@@ -4,7 +4,7 @@ from ..card import Card
 
 
 class DeckController(Controller):
-    def __init__(self, cards, copy=True, stream=True, filename=None):
+    def __init__(self, cards, copy=True, stream=True, filename=None, num_rounds_played=-1):
         super().__init__(stream=stream, filename=filename)
         assert isinstance(cards, list)
         assert len(cards) > 0
@@ -14,6 +14,7 @@ class DeckController(Controller):
         self.num_decks = 1
         self.draw_pile = cards.copy() if copy else cards
         self.used_pile = []
+        self.num_rounds_played = num_rounds_played
 
     @property
     def deck_size(self):
@@ -36,7 +37,7 @@ class DeckController(Controller):
 
     def shuffle(self):
         self.logger("Shuffling the draw pile...")
-        random.shuffle(self.draw_pile)
+        random.Random(self.num_rounds_played).shuffle(self.draw_pile)
 
     def regenerate_draw_pile(self):
         assert self.draw_pile_size == 0  # only enable regeneration of draw pile while it is run out

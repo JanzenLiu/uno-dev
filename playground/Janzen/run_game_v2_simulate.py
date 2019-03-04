@@ -12,13 +12,9 @@ if __name__ == "__main__":
     # target players
     # ==============
     target_players = [
-        (PlayerType.PC_FIRST_CARD, "PC_FIRSTCARD_1"),
-        (PlayerType.PC_RANDOM, "PC_RANDOM_1", dict(play_draw=1)),
-        (PlayerType.PC_RANDOM, "PC_RANDOM_2", dict(play_draw=.5)),
-        (PlayerType.PC_RANDOM, "PC_RANDOM_3", dict(play_draw=0)),
         (PlayerType.PC_GREEDY, "PC_GREEDY_1")
     ]
-    opponent_player = (PlayerType.PC_GREEDY, "NPC")
+    opponent_player = (PlayerType.PC_RANDOM, "NPC", dict(play_draw=0))
 
     # ===================
     # records preparation

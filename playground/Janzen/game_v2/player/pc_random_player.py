@@ -12,11 +12,13 @@ class PCRandomPlayer(Player):
         self.probs_for_draw = [float(play_draw), float(1 - play_draw)]
 
     def _get_play_from_playable(self, playable_cards, **info):
+        num_rounds_played = info.get("num_rounds_played", -1)
         assert isinstance(playable_cards, list) and len(playable_cards) > 0
-        return random.choice(playable_cards)
+        return random.Random(num_rounds_played).choice(playable_cards)
 
     def _play_new_playable(self, new_playable, **info):
         return bool(np.random.choice([True, False], p=self.probs_for_draw))  # to unify type
 
     def _get_color(self, **info):
-        return np.random.choice([CardColor.RED, CardColor.GREEN, CardColor.BLUE, CardColor.YELLOW])
+        num_rounds_played = info.get("num_rounds_played", -1)
+        return random.Random(num_rounds_played).choice([CardColor.RED, CardColor.GREEN, CardColor.BLUE, CardColor.YELLOW])
