@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # ===================
     # records preparation
     # ===================
-    final_csv_name = "greedy_playables_10000rounds_{}".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
+    final_csv_name = "greedy_playables_1000rounds_{}".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
     out_path = "local_result/{}.pkl".format(final_csv_name)
     # cols = ["player_type", "player_params", "num_players", "pos", "num_wins", "cum_reward"]
     # df = pd.DataFrame(columns=cols)  # keep the records
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # ===========
     # other setup
     # ===========
-    end_condition = GameEndCondition.ROUND_10000
+    end_condition = GameEndCondition.ROUND_1000
     min_num_players = 2
     max_num_players = 2
     num_backup_step = 3

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # target players
     # ==============
     target_players = [
-        (PlayerType.PC_GREEDY, "PC_GREEDY_1")
+        (PlayerType.PC_RANDOM, "PC_RANDOM_0", dict(play_draw=0))
     ]
     opponent_player = (PlayerType.PC_RANDOM, "NPC", dict(play_draw=0))
 
@@ -38,7 +38,8 @@ if __name__ == "__main__":
 
         for num_players in range(min_num_players, max_num_players + 1):
 
-            for pos in range(num_players):
+            # for pos in range(num_players):
+            for pos in range(1):
                 print("Testing {} ({}@{})...".format(target_player_tup[1], pos, num_players))
 
                 players = [opponent_player]*pos + [target_player_tup] + [opponent_player]*(num_players-1-pos)
@@ -52,22 +53,25 @@ if __name__ == "__main__":
 
                 # update records
                 # player_type | player_params | num_players | pos | num_wins | cum_rewards
-                row = {
-                    cols[0]: target_player_tup[0].name,
-                    cols[1]: target_player_tup[2] if len(target_player_tup) == 3 else "",
-                    cols[2]: num_players,
-                    cols[3]: pos,
-                    cols[4]: target_player.num_wins,
-                    cols[5]: target_player.cumulative_reward
-                }
-                df = df.append(row, ignore_index=True)
+                for pos_idx in range(num_players):
+                    tup = game.players[pos_idx]
+                    assert isinstance(tup, Player)
+                    row = {
+                        cols[0]: target_player_tup[0].name,
+                        cols[1]: target_player_tup[2] if len(target_player_tup) == 3 else "",
+                        cols[2]: num_players,
+                        cols[3]: pos_idx,
+                        cols[4]: tup.num_wins,
+                        cols[5]: tup.cumulative_reward
+                    }
+                    df = df.append(row, ignore_index=True)
                 # *** END ***
 
                 print()
             # backup current df
             # TODO: backup the whole df or just the part that has not been backuped yet?
-            if num_players in num_backup_points:
-                backup_path = "{}_to_{}_to_{}.csv".format(final_csv_name, target_player_tup[0].name, num_players)
-                df.to_csv(backup_path, index=False)
+            # if num_players in num_backup_points:
+            #     backup_path = "{}_to_{}_to_{}.csv".format(final_csv_name, target_player_tup[0].name, num_players)
+            #     df.to_csv(backup_path, index=False)
 
     df.to_csv(out_path, index=False)
