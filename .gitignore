@@ -14,7 +14,7 @@
 
 # local model
 *.h5
-*.log
+**/*.log
 
 # directories for local stuff
 local_*/
