@@ -1,0 +1,375 @@
+batch_size=256
+discount_factor=0.99
+epsilon=1.0
+epsilon_min=0.005
+epsilon_steps=5000
+hidden_sizes=[]
+learning_rate=0.001
+train_start=100
+Round 0: lose - 30 cards left - epsilon=0.9934 - win rate: 0.0%, avg reward: 0.0
+Round 1: lose - 53 cards left - epsilon=0.9817 - win rate: 0.0%, avg reward: -179.0
+Round 2: lose - 25 cards left - epsilon=0.9775 - win rate: 0.0%, avg reward: -303.67
+Round 3: lose - 39 cards left - epsilon=0.9690 - win rate: 0.0%, avg reward: -289.75
+Round 4: lose - 40 cards left - epsilon=0.9574 - win rate: 0.0%, avg reward: -311.8
+Round 5: lose - 16 cards left - epsilon=0.9552 - win rate: 0.0%, avg reward: -342.33
+Round 6: lose - 64 cards left - epsilon=0.9377 - win rate: 0.0%, avg reward: -327.29
+Round 7: lose - 30 cards left - epsilon=0.9300 - win rate: 0.0%, avg reward: -369.5
+Round 8: lose - 49 cards left - epsilon=0.9162 - win rate: 0.0%, avg reward: -374.22
+Round 9: lose - 17 cards left - epsilon=0.9148 - win rate: 0.0%, avg reward: -392.0
+Round 10: lose - 42 cards left - epsilon=0.8993 - win rate: 0.0%, avg reward: -385.55
+Round 11: lose - 20 cards left - epsilon=0.8955 - win rate: 0.0%, avg reward: -391.33
+Round 12: lose - 47 cards left - epsilon=0.8834 - win rate: 0.0%, avg reward: -380.31
+Round 13: lose - 8 cards left - epsilon=0.8826 - win rate: 0.0%, avg reward: -393.86
+Round 14: lose - 21 cards left - epsilon=0.8788 - win rate: 0.0%, avg reward: -372.93
+Round 15: lose - 44 cards left - epsilon=0.8685 - win rate: 0.0%, avg reward: -364.88
+Round 16: lose - 37 cards left - epsilon=0.8623 - win rate: 0.0%, avg reward: -375.65
+Round 17: lose - 38 cards left - epsilon=0.8543 - win rate: 0.0%, avg reward: -370.94
+Round 18: lose - 26 cards left - epsilon=0.8492 - win rate: 0.0%, avg reward: -372.95
+Round 19: lose - 27 cards left - epsilon=0.8432 - win rate: 0.0%, avg reward: -366.65
+Round 20: lose - 26 cards left - epsilon=0.8382 - win rate: 0.0%, avg reward: -362.48
+Round 21: lose - 13 cards left - epsilon=0.8364 - win rate: 0.0%, avg reward: -357.23
+Round 22: lose - 39 cards left - epsilon=0.8271 - win rate: 0.0%, avg reward: -348.43
+Round 23: lose - 15 cards left - epsilon=0.8259 - win rate: 0.0%, avg reward: -352.38
+Round 24: lose - 13 cards left - epsilon=0.8245 - win rate: 0.0%, avg reward: -346.96
+Round 25: lose - 23 cards left - epsilon=0.8205 - win rate: 0.0%, avg reward: -338.81
+Round 26: lose - 59 cards left - epsilon=0.7887 - win rate: 0.0%, avg reward: -335.78
+Round 27: lose - 21 cards left - epsilon=0.7843 - win rate: 0.0%, avg reward: -350.29
+Round 28: lose - 39 cards left - epsilon=0.7702 - win rate: 0.0%, avg reward: -347.66
+Round 29: lose - 9 cards left - epsilon=0.7684 - win rate: 0.0%, avg reward: -347.7
+Round 30: lose - 13 cards left - epsilon=0.7652 - win rate: 0.0%, avg reward: -339.26
+Round 31: lose - 19 cards left - epsilon=0.7630 - win rate: 0.0%, avg reward: -333.34
+Round 32: lose - 19 cards left - epsilon=0.7574 - win rate: 0.0%, avg reward: -331.76
+Round 33: lose - 8 cards left - epsilon=0.7566 - win rate: 0.0%, avg reward: -327.76
+Round 34: lose - 25 cards left - epsilon=0.7509 - win rate: 0.0%, avg reward: -320.03
+Round 35: lose - 17 cards left - epsilon=0.7489 - win rate: 0.0%, avg reward: -319.5
+Round 36: lose - 23 cards left - epsilon=0.7439 - win rate: 0.0%, avg reward: -315.08
+Round 37: lose - 16 cards left - epsilon=0.7381 - win rate: 0.0%, avg reward: -312.58
+Round 38: lose - 10 cards left - epsilon=0.7363 - win rate: 0.0%, avg reward: -309.69
+Round 39: lose - 19 cards left - epsilon=0.7315 - win rate: 0.0%, avg reward: -305.52
+Round 40: lose - 20 cards left - epsilon=0.7258 - win rate: 0.0%, avg reward: -302.07
+Round 41: lose - 28 cards left - epsilon=0.7188 - win rate: 0.0%, avg reward: -300.4
+Round 42: lose - 19 cards left - epsilon=0.7132 - win rate: 0.0%, avg reward: -300.14
+Round 43: lose - 29 cards left - epsilon=0.7065 - win rate: 0.0%, avg reward: -297.16
+Round 44: lose - 28 cards left - epsilon=0.6963 - win rate: 0.0%, avg reward: -295.84
+Round 45: lose - 14 cards left - epsilon=0.6939 - win rate: 0.0%, avg reward: -295.2
+Round 46: lose - 15 cards left - epsilon=0.6890 - win rate: 0.0%, avg reward: -290.94
+Round 47: lose - 24 cards left - epsilon=0.6828 - win rate: 0.0%, avg reward: -287.42
+Round 48: lose - 12 cards left - epsilon=0.6788 - win rate: 0.0%, avg reward: -287.12
+Round 49: lose - 12 cards left - epsilon=0.6776 - win rate: 0.0%, avg reward: -283.62
+Round 50: lose - 11 cards left - epsilon=0.6762 - win rate: 0.0%, avg reward: -281.9
+Round 51: lose - 27 cards left - epsilon=0.6671 - win rate: 0.0%, avg reward: -278.54
+Round 52: lose - 27 cards left - epsilon=0.6527 - win rate: 0.0%, avg reward: -278.0
+Round 53: lose - 27 cards left - epsilon=0.6408 - win rate: 0.0%, avg reward: -279.41
+Round 54: lose - 16 cards left - epsilon=0.6360 - win rate: 0.0%, avg reward: -279.22
+Round 55: lose - 25 cards left - epsilon=0.6269 - win rate: 0.0%, avg reward: -277.2
+Round 56: lose - 26 cards left - epsilon=0.6106 - win rate: 0.0%, avg reward: -276.39
+Round 57: lose - 13 cards left - epsilon=0.6074 - win rate: 0.0%, avg reward: -275.57
+Round 58: lose - 15 cards left - epsilon=0.6026 - win rate: 0.0%, avg reward: -274.37
+Round 59: lose - 16 cards left - epsilon=0.6000 - win rate: 0.0%, avg reward: -272.5
+Round 60: lose - 13 cards left - epsilon=0.5986 - win rate: 0.0%, avg reward: -271.25
+Round 61: lose - 13 cards left - epsilon=0.5917 - win rate: 0.0%, avg reward: -268.6
+Round 62: lose - 11 cards left - epsilon=0.5891 - win rate: 0.0%, avg reward: -266.49
+Round 63: lose - 15 cards left - epsilon=0.5845 - win rate: 0.0%, avg reward: -264.55
+Round 64: lose - 11 cards left - epsilon=0.5827 - win rate: 0.0%, avg reward: -263.05
+Round 65: lose - 16 cards left - epsilon=0.5714 - win rate: 0.0%, avg reward: -259.67
+Round 66: lose - 15 cards left - epsilon=0.5698 - win rate: 0.0%, avg reward: -258.07
+Round 67: lose - 17 cards left - epsilon=0.5538 - win rate: 0.0%, avg reward: -255.96
+Round 68: lose - 16 cards left - epsilon=0.5519 - win rate: 0.0%, avg reward: -254.71
+Round 69: lose - 14 cards left - epsilon=0.5485 - win rate: 0.0%, avg reward: -253.39
+Round 70: lose - 9 cards left - epsilon=0.5463 - win rate: 0.0%, avg reward: -251.68
+Round 71: lose - 16 cards left - epsilon=0.5443 - win rate: 0.0%, avg reward: -249.26
+Round 72: lose - 14 cards left - epsilon=0.5373 - win rate: 0.0%, avg reward: -247.99
+Round 73: lose - 13 cards left - epsilon=0.5300 - win rate: 0.0%, avg reward: -247.0
+Round 74: lose - 7 cards left - epsilon=0.5254 - win rate: 0.0%, avg reward: -245.41
+Round 75: lose - 12 cards left - epsilon=0.5178 - win rate: 0.0%, avg reward: -243.08
+Round 76: lose - 12 cards left - epsilon=0.5170 - win rate: 0.0%, avg reward: -241.65
+Round 77: lose - 5 cards left - epsilon=0.5152 - win rate: 0.0%, avg reward: -240.81
+Round 78: lose - 8 cards left - epsilon=0.5099 - win rate: 0.0%, avg reward: -238.25
+Round 79: lose - 15 cards left - epsilon=0.4931 - win rate: 0.0%, avg reward: -236.47
+Round 80: lose - 18 cards left - epsilon=0.4876 - win rate: 0.0%, avg reward: -236.02
+Round 81: lose - 14 cards left - epsilon=0.4842 - win rate: 0.0%, avg reward: -236.27
+Round 82: lose - 8 cards left - epsilon=0.4806 - win rate: 0.0%, avg reward: -235.23
+Round 83: lose - 12 cards left - epsilon=0.4728 - win rate: 0.0%, avg reward: -233.58
+Round 84: lose - 4 cards left - epsilon=0.4416 - win rate: 0.0%, avg reward: -232.25
+Round 85: lose - 5 cards left - epsilon=0.4257 - win rate: 0.0%, avg reward: -230.1
+Round 86: lose - 3 cards left - epsilon=0.4233 - win rate: 0.0%, avg reward: -227.75
+Round 87: lose - 8 cards left - epsilon=0.3889 - win rate: 0.0%, avg reward: -225.66
+Round 88: lose - 4 cards left - epsilon=0.3829 - win rate: 0.0%, avg reward: -223.52
+Round 89: lose - 5 cards left - epsilon=0.3811 - win rate: 0.0%, avg reward: -221.38
+Round 90: lose - 12 cards left - epsilon=0.3769 - win rate: 0.0%, avg reward: -219.32
+Round 91: lose - 6 cards left - epsilon=0.3753 - win rate: 0.0%, avg reward: -217.88
+Round 92: win - epsilon=0.3726 - win rate: 0.0%, avg reward: -215.87
+Round 93: lose - 8 cards left - epsilon=0.3674 - win rate: 1.06%, avg reward: -213.13
+Round 94: lose - 10 cards left - epsilon=0.3580 - win rate: 1.05%, avg reward: -211.6
+Round 95: win - epsilon=0.3503 - win rate: 1.04%, avg reward: -210.35
+Round 96: lose - 10 cards left - epsilon=0.3407 - win rate: 2.06%, avg reward: -206.86
+Round 97: lose - 7 cards left - epsilon=0.3341 - win rate: 2.04%, avg reward: -206.07
+Round 98: win - epsilon=0.3306 - win rate: 2.02%, avg reward: -204.61
+Round 99: lose - 9 cards left - epsilon=0.3228 - win rate: 3.0%, avg reward: -202.48
+Round 100: lose - 10 cards left - epsilon=0.3190 - win rate: 2.97%, avg reward: -201.78
+Round 101: lose - 12 cards left - epsilon=0.3164 - win rate: 2.94%, avg reward: -200.44
+Round 102: win - epsilon=0.3150 - win rate: 2.91%, avg reward: -199.53
+Round 103: lose - 7 cards left - epsilon=0.3097 - win rate: 3.85%, avg reward: -196.79
+Round 104: lose - 9 cards left - epsilon=0.3025 - win rate: 3.81%, avg reward: -195.43
+Round 105: win - epsilon=0.2979 - win rate: 3.77%, avg reward: -194.88
+Round 106: lose - 7 cards left - epsilon=0.2872 - win rate: 4.67%, avg reward: -192.43
+Round 107: lose - 5 cards left - epsilon=0.2830 - win rate: 4.63%, avg reward: -191.4
+Round 108: lose - 17 cards left - epsilon=0.2788 - win rate: 4.59%, avg reward: -190.06
+Round 109: lose - 8 cards left - epsilon=0.2748 - win rate: 4.55%, avg reward: -190.63
+Round 110: lose - 2 cards left - epsilon=0.2715 - win rate: 4.5%, avg reward: -189.37
+Round 111: lose - 6 cards left - epsilon=0.2649 - win rate: 4.46%, avg reward: -187.78
+Round 112: lose - 2 cards left - epsilon=0.2561 - win rate: 4.42%, avg reward: -186.41
+Round 113: win - epsilon=0.2522 - win rate: 4.39%, avg reward: -184.88
+Round 114: lose - 7 cards left - epsilon=0.2512 - win rate: 5.22%, avg reward: -182.72
+Round 115: lose - 14 cards left - epsilon=0.2498 - win rate: 5.17%, avg reward: -181.66
+Round 116: win - epsilon=0.2430 - win rate: 5.13%, avg reward: -180.81
+Round 117: lose - 14 cards left - epsilon=0.2354 - win rate: 5.93%, avg reward: -178.77
+Round 118: lose - 6 cards left - epsilon=0.2339 - win rate: 5.88%, avg reward: -178.18
+Round 119: lose - 2 cards left - epsilon=0.2303 - win rate: 5.83%, avg reward: -177.21
+Round 120: lose - 14 cards left - epsilon=0.2259 - win rate: 5.79%, avg reward: -175.79
+Round 121: win - epsilon=0.2177 - win rate: 5.74%, avg reward: -174.88
+Round 122: win - epsilon=0.2155 - win rate: 6.5%, avg reward: -173.22
+Round 123: win - epsilon=0.2134 - win rate: 7.26%, avg reward: -171.81
+Round 124: lose - 6 cards left - epsilon=0.2076 - win rate: 8.0%, avg reward: -169.93
+Round 125: lose - 3 cards left - epsilon=0.2042 - win rate: 7.94%, avg reward: -168.95
+Round 126: lose - 7 cards left - epsilon=0.2006 - win rate: 7.87%, avg reward: -167.84
+Round 127: lose - 13 cards left - epsilon=0.1962 - win rate: 7.81%, avg reward: -166.93
+Round 128: lose - 12 cards left - epsilon=0.1950 - win rate: 7.75%, avg reward: -166.38
+Round 129: lose - 13 cards left - epsilon=0.1931 - win rate: 7.69%, avg reward: -165.96
+Round 130: lose - 7 cards left - epsilon=0.1891 - win rate: 7.63%, avg reward: -165.37
+Round 131: lose - 4 cards left - epsilon=0.1881 - win rate: 7.58%, avg reward: -164.42
+Round 132: win - epsilon=0.1837 - win rate: 7.52%, avg reward: -163.45
+Round 133: lose - 2 cards left - epsilon=0.1736 - win rate: 8.21%, avg reward: -162.19
+Round 134: win - epsilon=0.1680 - win rate: 8.15%, avg reward: -161.05
+Round 135: lose - 10 cards left - epsilon=0.1664 - win rate: 8.82%, avg reward: -159.62
+Round 136: lose - 5 cards left - epsilon=0.1556 - win rate: 8.76%, avg reward: -159.09
+Round 137: lose - 9 cards left - epsilon=0.1533 - win rate: 8.7%, avg reward: -158.17
+Round 138: lose - 8 cards left - epsilon=0.1481 - win rate: 8.63%, avg reward: -157.84
+Round 139: lose - 8 cards left - epsilon=0.1461 - win rate: 8.57%, avg reward: -157.11
+Round 140: win - epsilon=0.1415 - win rate: 8.51%, avg reward: -156.7
+Round 141: lose - 4 cards left - epsilon=0.1401 - win rate: 9.15%, avg reward: -155.49
+Round 142: lose - 2 cards left - epsilon=0.1322 - win rate: 9.09%, avg reward: -154.54
+Round 143: win - epsilon=0.1300 - win rate: 9.03%, avg reward: -153.62
+Round 144: win - epsilon=0.1240 - win rate: 9.66%, avg reward: -152.11
+Round 145: win - epsilon=0.1202 - win rate: 10.27%, avg reward: -150.82
+Round 146: lose - 9 cards left - epsilon=0.1192 - win rate: 10.88%, avg reward: -149.74
+Round 147: win - epsilon=0.1174 - win rate: 10.81%, avg reward: -149.26
+Round 148: win - epsilon=0.1156 - win rate: 11.41%, avg reward: -147.92
+Round 149: win - epsilon=0.1093 - win rate: 12.0%, avg reward: -146.51
+Round 150: lose - 6 cards left - epsilon=0.1051 - win rate: 12.58%, avg reward: -145.16
+Round 151: lose - 5 cards left - epsilon=0.1035 - win rate: 12.5%, avg reward: -144.55
+Round 152: win - epsilon=0.1017 - win rate: 12.42%, avg reward: -143.89
+Round 153: lose - 14 cards left - epsilon=0.1003 - win rate: 12.99%, avg reward: -142.86
+Round 154: lose - 6 cards left - epsilon=0.0977 - win rate: 12.9%, avg reward: -142.67
+Round 155: lose - 4 cards left - epsilon=0.0953 - win rate: 12.82%, avg reward: -142.19
+Round 156: win - epsilon=0.0920 - win rate: 12.74%, avg reward: -141.41
+Round 157: lose - 4 cards left - epsilon=0.0884 - win rate: 13.29%, avg reward: -140.09
+Round 158: lose - 3 cards left - epsilon=0.0850 - win rate: 13.21%, avg reward: -139.57
+Round 159: lose - 3 cards left - epsilon=0.0836 - win rate: 13.12%, avg reward: -138.9
+Round 160: lose - 7 cards left - epsilon=0.0822 - win rate: 13.04%, avg reward: -138.07
+Round 161: lose - 9 cards left - epsilon=0.0810 - win rate: 12.96%, avg reward: -137.58
+Round 162: win - epsilon=0.0782 - win rate: 12.88%, avg reward: -137.39
+Round 163: lose - 6 cards left - epsilon=0.0752 - win rate: 13.41%, avg reward: -136.35
+Round 164: win - epsilon=0.0715 - win rate: 13.33%, avg reward: -135.85
+Round 165: win - epsilon=0.0701 - win rate: 13.86%, avg reward: -134.42
+Round 166: win - epsilon=0.0687 - win rate: 14.37%, avg reward: -133.14
+Round 167: win - epsilon=0.0647 - win rate: 14.88%, avg reward: -131.74
+Round 168: lose - 4 cards left - epsilon=0.0577 - win rate: 15.38%, avg reward: -130.87
+Round 169: lose - 5 cards left - epsilon=0.0548 - win rate: 15.29%, avg reward: -130.27
+Round 170: win - epsilon=0.0534 - win rate: 15.2%, avg reward: -129.75
+Round 171: lose - 3 cards left - epsilon=0.0518 - win rate: 15.7%, avg reward: -128.7
+Round 172: win - epsilon=0.0448 - win rate: 15.61%, avg reward: -128.12
+Round 173: win - epsilon=0.0416 - win rate: 16.09%, avg reward: -127.22
+Round 174: win - epsilon=0.0362 - win rate: 16.57%, avg reward: -126.49
+Round 175: win - epsilon=0.0325 - win rate: 17.05%, avg reward: -125.65
+Round 176: win - epsilon=0.0289 - win rate: 17.51%, avg reward: -124.87
+Round 177: lose - 6 cards left - epsilon=0.0191 - win rate: 17.98%, avg reward: -124.01
+Round 178: lose - 10 cards left - epsilon=0.0177 - win rate: 17.88%, avg reward: -123.65
+Round 179: win - epsilon=0.0163 - win rate: 17.78%, avg reward: -123.43
+Round 180: lose - 7 cards left - epsilon=0.0151 - win rate: 18.23%, avg reward: -122.2
+Round 181: win - epsilon=0.0134 - win rate: 18.13%, avg reward: -121.88
+Round 182: win - epsilon=0.0082 - win rate: 18.58%, avg reward: -121.13
+Round 183: lose - 2 cards left - epsilon=0.0052 - win rate: 19.02%, avg reward: -120.27
+Round 184: lose - 3 cards left - win rate: 18.92%, avg reward: -119.75
+Round 185: win - win rate: 18.82%, avg reward: -119.19
+Round 186: lose - 4 cards left - win rate: 19.25%, avg reward: -118.36
+Round 187: win - win rate: 19.15%, avg reward: -117.79
+Round 188: lose - 3 cards left - win rate: 19.58%, avg reward: -116.25
+Round 189: lose - 8 cards left - win rate: 19.47%, avg reward: -115.81
+Round 190: lose - 5 cards left - win rate: 19.37%, avg reward: -115.54
+Round 191: win - win rate: 19.27%, avg reward: -115.21
+Round 192: win - win rate: 19.69%, avg reward: -114.38
+Round 193: lose - 8 cards left - win rate: 20.1%, avg reward: -113.44
+Round 194: lose - 3 cards left - win rate: 20.0%, avg reward: -113.33
+Round 195: lose - 3 cards left - win rate: 19.9%, avg reward: -112.9
+Round 196: lose - 13 cards left - win rate: 19.8%, avg reward: -112.54
+Round 197: lose - 1 cards left - win rate: 19.7%, avg reward: -112.6
+Round 198: lose - 4 cards left - win rate: 19.6%, avg reward: -112.07
+Round 199: lose - 4 cards left - win rate: 19.5%, avg reward: -111.66
+Round 200: lose - 2 cards left - win rate: 19.4%, avg reward: -111.33
+Round 201: win - win rate: 19.31%, avg reward: -110.9
+Round 202: lose - 13 cards left - win rate: 19.7%, avg reward: -110.14
+Round 203: win - win rate: 19.61%, avg reward: -110.22
+Round 204: win - win rate: 20.0%, avg reward: -109.57
+Round 205: win - win rate: 20.39%, avg reward: -108.93
+Round 206: lose - 3 cards left - win rate: 20.77%, avg reward: -108.08
+Round 207: lose - 7 cards left - win rate: 20.67%, avg reward: -107.79
+Round 208: win - win rate: 20.57%, avg reward: -107.58
+Round 209: win - win rate: 20.95%, avg reward: -106.89
+Round 210: win - win rate: 21.33%, avg reward: -106.23
+Round 211: lose - 2 cards left - win rate: 21.7%, avg reward: -105.66
+Round 212: lose - 3 cards left - win rate: 21.6%, avg reward: -105.35
+Round 213: lose - 2 cards left - win rate: 21.5%, avg reward: -104.92
+Round 214: lose - 7 cards left - win rate: 21.4%, avg reward: -104.51
+Round 215: lose - 1 cards left - win rate: 21.3%, avg reward: -104.36
+Round 216: lose - 11 cards left - win rate: 21.2%, avg reward: -103.92
+Round 217: win - win rate: 21.1%, avg reward: -103.87
+Round 218: win - win rate: 21.46%, avg reward: -103.21
+Round 219: lose - 2 cards left - win rate: 21.82%, avg reward: -102.53
+Round 220: lose - 2 cards left - win rate: 21.72%, avg reward: -102.13
+Round 221: win - win rate: 21.62%, avg reward: -101.77
+Round 222: win - win rate: 21.97%, avg reward: -101.19
+Round 223: win - win rate: 22.32%, avg reward: -100.69
+Round 224: lose - 4 cards left - win rate: 22.67%, avg reward: -99.92
+Round 225: lose - 12 cards left - win rate: 22.57%, avg reward: -99.7
+Round 226: win - win rate: 22.47%, avg reward: -100.27
+Round 227: win - win rate: 22.81%, avg reward: -99.71
+Round 228: lose - 7 cards left - win rate: 23.14%, avg reward: -99.21
+Round 229: win - win rate: 23.04%, avg reward: -99.01
+Round 230: lose - 10 cards left - win rate: 23.38%, avg reward: -98.46
+Round 231: win - win rate: 23.28%, avg reward: -98.57
+Round 232: lose - 10 cards left - win rate: 23.61%, avg reward: -97.97
+Round 233: win - win rate: 23.5%, avg reward: -97.8
+Round 234: win - win rate: 23.83%, avg reward: -97.36
+Round 235: win - win rate: 24.15%, avg reward: -96.71
+Round 236: lose - 1 cards left - win rate: 24.47%, avg reward: -95.97
+Round 237: lose - 4 cards left - win rate: 24.37%, avg reward: -95.65
+Round 238: win - win rate: 24.27%, avg reward: -95.37
+Round 239: win - win rate: 24.58%, avg reward: -94.64
+Round 240: lose - 5 cards left - win rate: 24.9%, avg reward: -94.02
+Round 241: lose - 3 cards left - win rate: 24.79%, avg reward: -93.86
+Round 242: lose - 2 cards left - win rate: 24.69%, avg reward: -93.59
+Round 243: lose - 10 cards left - win rate: 24.59%, avg reward: -93.26
+Round 244: lose - 11 cards left - win rate: 24.49%, avg reward: -93.31
+Round 245: win - win rate: 24.39%, avg reward: -93.35
+Round 246: lose - 8 cards left - win rate: 24.7%, avg reward: -92.92
+Round 247: win - win rate: 24.6%, avg reward: -93.33
+Round 248: win - win rate: 24.9%, avg reward: -92.78
+Round 249: win - win rate: 25.2%, avg reward: -92.27
+Round 250: win - win rate: 25.5%, avg reward: -91.62
+Round 251: lose - 7 cards left - win rate: 25.79%, avg reward: -90.73
+Round 252: lose - 3 cards left - win rate: 25.69%, avg reward: -90.63
+Round 253: win - win rate: 25.59%, avg reward: -90.39
+Round 254: lose - 11 cards left - win rate: 25.88%, avg reward: -89.78
+Round 255: lose - 2 cards left - win rate: 25.78%, avg reward: -89.78
+Round 256: lose - 2 cards left - win rate: 25.68%, avg reward: -89.46
+Round 257: win - win rate: 25.58%, avg reward: -89.16
+Round 258: win - win rate: 25.87%, avg reward: -88.73
+Round 259: lose - 4 cards left - win rate: 26.15%, avg reward: -88.33
+Round 260: win - win rate: 26.05%, avg reward: -88.25
+Round 261: lose - 2 cards left - win rate: 26.34%, avg reward: -87.59
+Round 262: win - win rate: 26.24%, avg reward: -87.3
+Round 263: win - win rate: 26.52%, avg reward: -86.65
+Round 264: win - win rate: 26.79%, avg reward: -86.25
+Round 265: win - win rate: 27.07%, avg reward: -85.89
+Round 266: lose - 5 cards left - win rate: 27.34%, avg reward: -85.52
+Round 267: win - win rate: 27.24%, avg reward: -85.29
+Round 268: win - win rate: 27.51%, avg reward: -84.84
+Round 269: win - win rate: 27.78%, avg reward: -83.89
+Round 270: lose - 1 cards left - win rate: 28.04%, avg reward: -83.52
+Round 271: win - win rate: 27.94%, avg reward: -83.24
+Round 272: lose - 11 cards left - win rate: 28.21%, avg reward: -82.81
+Round 273: win - win rate: 28.1%, avg reward: -83.0
+Round 274: lose - 8 cards left - win rate: 28.36%, avg reward: -82.57
+Round 275: lose - 5 cards left - win rate: 28.26%, avg reward: -82.47
+Round 276: win - win rate: 28.16%, avg reward: -82.29
+Round 277: lose - 4 cards left - win rate: 28.42%, avg reward: -81.97
+Round 278: lose - 6 cards left - win rate: 28.32%, avg reward: -81.73
+Round 279: win - win rate: 28.21%, avg reward: -81.54
+Round 280: win - win rate: 28.47%, avg reward: -80.89
+Round 281: lose - 6 cards left - win rate: 28.72%, avg reward: -80.37
+Round 282: lose - 9 cards left - win rate: 28.62%, avg reward: -80.29
+Round 283: win - win rate: 28.52%, avg reward: -80.24
+Round 284: win - win rate: 28.77%, avg reward: -79.56
+Round 285: win - win rate: 29.02%, avg reward: -79.21
+Round 286: lose - 3 cards left - win rate: 29.27%, avg reward: -78.7
+Round 287: lose - 5 cards left - win rate: 29.17%, avg reward: -78.55
+Round 288: win - win rate: 29.07%, avg reward: -78.36
+Round 289: lose - 6 cards left - win rate: 29.31%, avg reward: -77.94
+Round 290: lose - 2 cards left - win rate: 29.21%, avg reward: -77.85
+Round 291: lose - 2 cards left - win rate: 29.11%, avg reward: -77.63
+Round 292: lose - 6 cards left - win rate: 29.01%, avg reward: -77.44
+Round 293: win - win rate: 28.91%, avg reward: -77.38
+Round 294: win - win rate: 29.15%, avg reward: -77.09
+Round 295: win - win rate: 29.39%, avg reward: -76.68
+Round 296: lose - 10 cards left - win rate: 29.63%, avg reward: -75.89
+Round 297: lose - 2 cards left - win rate: 29.53%, avg reward: -75.83
+Round 298: win - win rate: 29.43%, avg reward: -75.67
+Round 299: lose - 2 cards left - win rate: 29.67%, avg reward: -75.37
+Round 300: win - win rate: 29.57%, avg reward: -75.16
+Round 301: lose - 7 cards left - win rate: 29.8%, avg reward: -74.73
+Round 302: lose - 13 cards left - win rate: 29.7%, avg reward: -74.8
+Round 303: win - win rate: 29.61%, avg reward: -74.82
+Round 304: win - win rate: 29.84%, avg reward: -74.38
+Round 305: lose - 1 cards left - win rate: 30.07%, avg reward: -74.06
+Round 306: lose - 3 cards left - win rate: 29.97%, avg reward: -73.82
+Round 307: win - win rate: 29.87%, avg reward: -73.63
+Round 308: win - win rate: 30.1%, avg reward: -73.32
+Round 309: win - win rate: 30.32%, avg reward: -72.78
+Round 310: lose - 2 cards left - win rate: 30.55%, avg reward: -72.21
+Round 311: win - win rate: 30.45%, avg reward: -71.99
+Round 312: win - win rate: 30.67%, avg reward: -71.56
+Round 313: lose - 7 cards left - win rate: 30.89%, avg reward: -71.15
+Round 314: lose - 7 cards left - win rate: 30.79%, avg reward: -71.1
+Round 315: win - win rate: 30.7%, avg reward: -71.08
+Round 316: lose - 6 cards left - win rate: 30.91%, avg reward: -70.74
+Round 317: win - win rate: 30.82%, avg reward: -70.58
+Round 318: win - win rate: 31.03%, avg reward: -70.14
+Round 319: win - win rate: 31.25%, avg reward: -69.88
+Round 320: lose - 6 cards left - win rate: 31.46%, avg reward: -69.41
+Round 321: lose - 5 cards left - win rate: 31.37%, avg reward: -69.38
+Round 322: lose - 5 cards left - win rate: 31.27%, avg reward: -69.3
+Round 323: lose - 1 cards left - win rate: 31.17%, avg reward: -69.2
+Round 324: win - win rate: 31.08%, avg reward: -68.99
+Round 325: win - win rate: 31.29%, avg reward: -68.65
+Round 326: win - win rate: 31.5%, avg reward: -68.3
+Round 327: win - win rate: 31.71%, avg reward: -68.01
+Round 328: win - win rate: 31.91%, avg reward: -67.77
+Round 329: lose - 6 cards left - win rate: 32.12%, avg reward: -67.42
+Round 330: lose - 2 cards left - win rate: 32.02%, avg reward: -67.46
+Round 331: lose - 3 cards left - win rate: 31.93%, avg reward: -67.28
+Round 332: win - win rate: 31.83%, avg reward: -67.19
+Round 333: win - win rate: 32.04%, avg reward: -66.62
+Round 334: win - win rate: 32.24%, avg reward: -65.92
+Round 335: win - win rate: 32.44%, avg reward: -65.57
+Round 336: win - win rate: 32.64%, avg reward: -65.29
+Round 337: win - win rate: 32.84%, avg reward: -64.97
+Round 338: win - win rate: 33.04%, avg reward: -64.67
+Round 339: win - win rate: 33.24%, avg reward: -64.46
+Round 340: win - win rate: 33.43%, avg reward: -64.21
+Round 341: win - win rate: 33.63%, avg reward: -63.96
+Round 342: win - win rate: 33.82%, avg reward: -63.72
+Round 343: lose - 16 cards left - win rate: 34.01%, avg reward: -63.47
+Round 344: lose - 4 cards left - win rate: 33.91%, avg reward: -63.86
+Round 345: win - win rate: 33.82%, avg reward: -63.87
+Round 346: lose - 5 cards left - win rate: 34.01%, avg reward: -63.6
+Round 347: win - win rate: 33.91%, avg reward: -63.48
+Round 348: lose - 6 cards left - win rate: 34.1%, avg reward: -63.23
+Round 349: lose - 3 cards left - win rate: 34.0%, avg reward: -63.13
+Round 350: win - win rate: 33.9%, avg reward: -62.99
+Round 351: lose - 3 cards left - win rate: 34.09%, avg reward: -62.68
+Round 352: win - win rate: 33.99%, avg reward: -62.55
+Round 353: lose - 2 cards left - win rate: 34.18%, avg reward: -62.22
+Round 354: lose - 2 cards left - win rate: 34.08%, avg reward: -62.11
+Round 355: win - win rate: 33.99%, avg reward: -61.97
+Round 356: lose - 5 cards left - win rate: 34.17%, avg reward: -61.78
+Round 357: lose - 8 cards left - win rate: 34.08%, avg reward: -61.72
+Round 358: lose - 11 cards left - win rate: 33.98%, avg reward: -61.89
+Round 359: win - win rate: 33.89%, avg reward: -62.02
+Round 360: win - win rate: 34.07%, avg reward: -61.73
+Round 361: lose - 5 cards left - win rate: 34.25%, avg reward: -61.49
+Round 362: win - win rate: 34.16%, avg reward: -61.48
+Round 363: win - win rate: 34.34%, avg reward: -61.23
+Round 364: win - win rate: 34.52%, avg reward: -60.91
+Round 365: lose - 2 cards left - win rate: 34.7%, avg reward: -60.66
+Round 366: win - win rate: 34.6%, avg reward: -60.53
