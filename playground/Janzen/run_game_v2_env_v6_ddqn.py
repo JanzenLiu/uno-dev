@@ -65,7 +65,7 @@ class DoubleDQNAgent:
             self.epsilon -= self.epsilon_decay
 
     def train_replay(self):
-        # same as DQN
+        # sample batch memory from all memory
         memory_size = len(self.memory)
         if memory_size < self.train_start:
             return
@@ -79,7 +79,13 @@ class DoubleDQNAgent:
             state, action, reward, next_state, done = mini_batch[i]
 
             if not done:
-                target = reward + self.discount_factor * np.amax(self.target_model.predict(next_state)[0])
+                tmp_q_next = self.target_model.predict(next_state)
+                q_next = tmp_q_next[0]
+                tmp_q_eval4next = self.model.predict(next_state)
+                q_eval4next = tmp_q_eval4next[0]
+                max_act4next = np.argmax(q_eval4next)  # the action with highest q value evaluated by the eval net
+                selected_q_next = q_next[max_act4next]
+                target = reward + self.discount_factor * selected_q_next
             else:
                 target = reward
 
@@ -120,8 +126,8 @@ if __name__ == "__main__":
     # initialize logger
     log_id = kwargs.pop('log_id')
     assert log_id < 1000
-    filename = 'env-v6-dqn-{:0>3}-local-op-rd1.log'.format(log_id)
-    logger = logging.Logger("DQNLogger")
+    filename = 'env-v6-ddqn-{:0>3}-local.log'.format(log_id)
+    logger = logging.Logger("DDQNLogger")
     sh = logging.StreamHandler()
     fh = logging.FileHandler(filename)
     logger.addHandler(sh)
@@ -131,13 +137,13 @@ if __name__ == "__main__":
     for k, v, in kwargs.items():
         logger.info('{}={}'.format(k, v))
 
-    logger.info('opponent=random1')
+    logger.info('opponent=greedy')
 
     # initialize agent
     env = make_env(version=6)
     state_size = env.state_space_dim
     action_size = env.action_space_dim
-    agent = DQNAgent(state_size, action_size, **kwargs)
+    agent = DoubleDQNAgent(state_size, action_size, **kwargs)
 
     for i in range(episodes):
         state, done = env.reset()
@@ -172,5 +178,5 @@ if __name__ == "__main__":
     logger.info("win rate: {}, avg reward: {}".format(env.players[0].num_wins / episodes,
                                                       env.players[0].cumulative_reward / episodes))
 
-    model_path = 'env-v6-dqn-{:0>3}-local-op-rd1.h5'.format(log_id)
+    model_path = 'env-v6-ddqn-{:0>3}-local.h5'.format(log_id)
     agent.save_model(model_path)

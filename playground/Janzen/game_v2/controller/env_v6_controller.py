@@ -51,7 +51,7 @@ class EnvV6Controller(Controller):
         self.players = [None] * 2
         self.players[0] = construct_player(PlayerType.PC_GREEDY, idx=0, name='Agent',
                                            stream=self.stream, filename=self.filename)  # Indeed use an external agent
-        self.players[1] = construct_player(PlayerType.PC_RANDOM, idx=1, name='Random1', play_draw=1,
+        self.players[1] = construct_player(PlayerType.PC_GREEDY, idx=1, name='Greedy',
                                            stream=self.stream, filename=self.filename)
         self.ext_player = self.players[0]
 

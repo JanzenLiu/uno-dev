@@ -32,7 +32,10 @@ def dqn_get_play(model, classmap, playable_cards, **info):
     state[play_state["type"].value + 16] = 1  # type(dim=6),   #16 - #21
 
     # flow state(dim=2): clockwise(dim=2)
-    state[int(info.get("clockwise", None)) + 22] = 1  # #22 - #23
+    # state[int(info.get("clockwise", None)) + 22] = 1  # #22 - #23
+    clockwise = info.get("clockwise", None)
+    if clockwise is not None:
+        state[int(clockwise) + 22] = 1
 
     # player state(dim=110): cards(dim=54) in hand, number of them(dim=1) and valid actions can play(dim=55)
     player = info.get("current_player", None)
@@ -74,19 +77,21 @@ if __name__ == "__main__":
     # =======
     # players
     # =======
+    trained_op = "fc"
+    print("Agent trained by {}".format(trained_op))
     target_player_tup = (
         PlayerType.POLICY,
         "ENV6_DQN2",
         dict(get_play=KerasPolicy(name="dqn_policy", atype="get_play",
-                                  model="env-v6-dqn-323-local-op-fc.h5",
+                                  model="env-v6-dqn-323-local-op-{}.h5".format(trained_op),
                                   strategy=dqn_get_play, classmap=action_map))
     )
-    opponent_player = (PlayerType.PC_GREEDY, "NPC")
+    opponent_player = (PlayerType.PC_RANDOM, "PC_RANDOM_0", dict(play_draw=0))
 
     # ===================
     # records preparation
     # ===================
-    out_path = "local_result/Env6Dqn2_fc_10000rounds_{}.csv".format(datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
+    out_path = "local_result/Env6Dqn2_{}_10000rounds_{}.csv".format(trained_op, datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
     cols = ["player_type", "player_params", "num_players", "pos", "num_wins", "cum_reward"]
     df = pd.DataFrame(columns=cols)  # keep the records
 
