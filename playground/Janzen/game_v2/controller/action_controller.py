@@ -210,7 +210,9 @@ class ActionController(Controller):
                 self.state_controller.current_value,
                 self.state_controller.current_type,
                 self.state_controller.current_to_draw,
-                next_player=self.flow_controller.next_player()
+                next_player=self.flow_controller.next_player(),
+                clockwise=self.flow_controller.clockwise,
+                used_pile=self.deck_controller.used_pile
             )
             if play is not None:
                 self.player_play_card(player, play)

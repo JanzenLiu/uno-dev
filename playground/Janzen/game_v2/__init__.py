@@ -1,5 +1,5 @@
 from .game import Game, GameEndCondition
-from .env import make_env
+from .controller import BattleEnv
 from .policy import *
 from .player import *
 from .card import *
