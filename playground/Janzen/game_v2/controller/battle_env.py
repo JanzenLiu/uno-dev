@@ -383,9 +383,9 @@ class BattleEnv(Controller):
                 elif rv == "count_1.1":
                     reward[i] += self.opp_player.num_cards
                 elif rv == "final_1":
-                    reward[i] = 100
+                    reward[i] = 10
                 elif rv == "final_1.1":
-                    reward[i] = 100
+                    reward[i] = 10
                 elif rv == "type_1":
                     reward[i] = 10
                 # ----------------------
