@@ -2,6 +2,7 @@ import random
 import logging
 import argparse
 import numpy as np
+import sys
 from collections import deque, OrderedDict
 from keras.layers import Dense
 from keras.optimizers import Adam
@@ -124,6 +125,9 @@ if __name__ == "__main__":
     logger.addHandler(sh)
     logger.addHandler(fh)
 
+    model_path_wr = 'battle-dqn-{:0>3}-best-wr-local.h5'.format(log_id)
+    model_path_ar = 'battle-dqn-{:0>3}-best-ar-local.h5'.format(log_id)
+
     # log hyper-parameters
     for k, v, in kwargs.items():
         logger.info('{}={}'.format(k, v))
@@ -137,6 +141,8 @@ if __name__ == "__main__":
     agent = DQNAgent(state_size, action_size, **kwargs)
     wins = []
     rewards = []
+    max_window_wr = -sys.maxsize - 1
+    max_window_ar = -sys.maxsize - 1
 
     state, done = env.start_round()
 
@@ -155,33 +161,45 @@ if __name__ == "__main__":
         wins.append(int(win))
         rewards.append(env.opp_player.loss if win else -env.ext_player.loss)
 
-        if agent.epsilon > agent.epsilon_min:
-            epsilon_string = " - epsilon={:.4f}".format(agent.epsilon)
-        else:
-            epsilon_string = ""
-
         if i >= 100:
-            epsilon_string += " - win rate: {}%, avg reward: {}".format(
-                sum(wins[-100:]),
-                round(sum(rewards[-100:]) / 100, 2)
-            )
+            window_wr = sum(wins[-100:])
+            window_ar = sum(rewards[-100:]) / 100
         else:
-            epsilon_string += " - win rate: {}%, avg reward: {}".format(
-                round(sum(wins) / (i + 1) * 100, 2),
-                round(sum(rewards) / (i + 1), 2)
-            )
+            window_wr = sum(wins) / (i + 1) * 100
+            window_ar = sum(rewards) / (i + 1)
+
+        if agent.epsilon > agent.epsilon_min:
+            msg = " - epsilon={:.4f}".format(agent.epsilon)
+        else:
+            msg = ""
+
+        msg += " - win rate: {}%, avg reward: {}".format(
+            round(window_wr, 2),
+            round(window_ar, 2)
+        )
+
         if win:
-            logger.info("Round {}: win{}".format(i, epsilon_string))
+            msg = "Round {}: win{}".format(i, msg)
         else:
-            logger.info("Round {}: lose - {} cards left{}".format(i, env.ext_player.num_cards, epsilon_string))
+            msg = "Round {}: lose - {} cards left{}".format(i, env.ext_player.num_cards, msg)
+
+        if window_wr > max_window_wr:
+            max_window_wr = window_wr
+            agent.save_model(model_path_wr)
+            msg += " (best wwr)"
+        if window_ar > max_window_ar:
+            max_window_ar = window_ar
+            agent.save_model(model_path_ar)
+            msg += " (best war)"
+
+        logger.info(msg)
 
         if i < episodes - 1:
             state, done = env.reset()
 
     env.end_round()
 
-    logger.info("win rate: {}, avg reward: {}".format(env.ext_player.num_wins / episodes,
-                                                      env.ext_player.cumulative_reward / episodes))
-
-    model_path = 'battle-dqn-{:0>3}-local.h5'.format(log_id)
-    agent.save_model(model_path)
+    logger.info("best window win rate: {}\nbest window avg reward: {}".format(
+        round(max_window_wr, 2),
+        round(max_window_ar, 2)
+    ))
