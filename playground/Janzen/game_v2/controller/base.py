@@ -17,11 +17,11 @@ class Controller(object):
                                 stream=stream,
                                 filename=filename)
 
-    def __repr__(self):
-        return "{}({})".format(type(self).__name__, self.format_attribute())
-
-    def __str__(self):
-        return "{}({})".format(type(self).__name__, self.format_attribute())
+    # def __repr__(self):
+    #     return "{}({})".format(type(self).__name__, self.format_attribute())
+    #
+    # def __str__(self):
+    #     return "{}({})".format(type(self).__name__, self.format_attribute())
 
     def format_attribute(self):
         raise NotImplementedError

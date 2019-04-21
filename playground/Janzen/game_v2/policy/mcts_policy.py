@@ -1,25 +1,17 @@
-from __future__ import division
-import random
-import logging
-import argparse
+from .base import Policy, ActionType
+from ..card import Card, CardColor, make_standard_unique_deck
 import numpy as np
-import pickle
-import sys
-import time
-from collections import defaultdict, OrderedDict
-try:
-    from .game_v2 import *
-except (ModuleNotFoundError if sys.version_info >= (3, 6) else SystemError) as e:
-    from game_v2 import *
 import copy
+import random
 
 
-# ===================
-# For general purpose
-# ===================
-def save_pickle(obj, path):
-    with open(path, "wb") as f:
-        pickle.dump(obj, f)
+state_space_dim = 135
+unique_cards = make_standard_unique_deck()
+action_names = [card.short_name for card in unique_cards] + [None]
+action_space_dim = len(action_names)
+action_space = list(range(action_space_dim))
+action_map = dict(zip(action_space, action_names))  # int -> card/None
+action_invmap = dict(zip(action_names, action_space))  # card/None -> int
 
 
 def rand_max(iterable, key=None):
@@ -274,52 +266,79 @@ class StateNode(Node):
         return self.game.done
 
 
-# =========
-# For agent
-# =========
-class MCTSAgent(object):
-    """
-    The central MCTS class, which performs the tree search. It gets a
-    tree policy, a default policy, and a backup strategy.
-    See e.g. Browne et al. (2012) for a survey on monte carlo tree search
-    """
+def mcts_get_play(playable_cards, **info):
+    assert isinstance(playable_cards, list) and len(playable_cards) > 0
+    mcts_iter = info.get("mcts_iter", 100)
+    tree_policy = info.get("tree_policy")
+    default_policy = info.get("default_policy")
+    backup = info.get("backup")
+    game = info.get("game")
+    game_bak = info.get("game_bak")
 
-    def __init__(self, tree_policy, default_policy, backup, game):
-        self.tree_policy = tree_policy
-        self.default_policy = default_policy
-        self.backup = backup
-        self.game = game
-        self.game_bak = copy.deepcopy(self.game)
+    # =============
+    # preprocessing
+    # =============
+    # make model input from the given parameters
+    state = np.zeros(state_space_dim)
 
-    def get_action(self, s, n=1000):
-        """
-        Run the monte carlo tree search.
+    # play state(dim=22)
+    play_state = info.get("play_state", None)
+    state[0] = play_state["to_draw"]  # to draw(dim=1),        #0
+    state[play_state["color"].value] = 1  # color(dim=4),      #1 - #4
+    state[play_state["value"] + 6] = 1  # value(dim=11),       #5 - #15
+    state[play_state["type"].value + 16] = 1  # type(dim=6),   #16 - #21
 
-        :param root: The StateNode
-        :param n: The number of roll-outs to be performed
-        :return: best action
-        """
+    # flow state(dim=2): clockwise(dim=2)
+    state[int(info.get("clockwise", None)) + 22] = 1  # #22 - #23
 
-        root = StateNode(None, s, self.game)
+    # player state(dim=110): cards(dim=54) in hand, number of them(dim=1) and valid actions can play(dim=55)
+    player = info.get("current_player", None)
+    state[24] = info.get("num_cards_left", None)  # #24
+    for card in player.cards:  # #25 - #78
+        state[action_invmap[card.short_name] + 25] += 1
 
-        if root.parent is not None:
-            raise ValueError("Root's parent must be None.")
+    if len(playable_cards) == 0:
+        state[133] = 1
+    else:
+        for i, card in playable_cards:
+            state[action_invmap[card.short_name] + 79] += 1  # #79 - #132
 
-        for _ in range(n):
-            # print("get_action loop")
-            # selection
-            node = _get_next_node(root, self.tree_policy)
-            # print("after _get_next_node")
-            # simulation
-            node.reward = self.default_policy(node)
-            # print("after simulation")
-            # back
-            self.backup(node)
-            # print("after backpropagation")
+    # other player state(dim=1): #cards in each other player's hand
+    state[134] = info.get("next_player", None).num_cards
 
-            root.reset(copy.deepcopy(self.game_bak))
+    state = np.reshape(state, (1, -1))
 
-        return rand_max(root.children.values(), key=lambda x: x.q).action
+    # ===========
+    # tree search
+    # ===========
+    root = StateNode(None, state, game)
+
+    if root.parent is not None:
+        raise ValueError("Root's parent must be None.")
+
+    for _ in range(mcts_iter):
+        # selection
+        node = _get_next_node(root, tree_policy)
+        # simulation
+        node.reward = default_policy(node)
+        # back
+        backup(node)
+
+        root.reset(copy.deepcopy(game_bak))
+
+    action_id = rand_max(root.children.values(), key=lambda x: x.q).action
+
+    # ==============
+    # postprocessing
+    # ==============
+    action_name = action_map[action_id]  # action_map
+    play = None
+    for i, card in playable_cards:
+        card_short_name = card.short_name
+        if card_short_name == action_name:
+            play = i, card
+
+    return play
 
 
 def _expand(state_node):
@@ -343,110 +362,20 @@ def _get_next_node(state_node, tree_policy):
     return state_node
 
 
-if __name__ == "__main__":
-    # parse arguments
-    # example: `python3 run_game_v2_battle_dqn_local.py -n 64 64 -i 5`
-    parser = argparse.ArgumentParser()
-    # parser.add_argument('--epsilon', type=float, default=1.0)
-    # parser.add_argument('--epsilon_min', type=float, default=0.005)
-    # parser.add_argument('--epsilon_steps', type=int, default=5000)
-    parser.add_argument('--log_id', '-i', type=int, required=True)
-    parser.add_argument('--episodes', type=int, default=1000)
-    parser.add_argument('--state', type=str, default="1d_1")
-    parser.add_argument('--reward', type=str, default="score_1")
-    parser.add_argument('--mcts_iter', '-n', type=int, default=1000)
-    args = parser.parse_args()
-    kwargs = OrderedDict(sorted(args._get_kwargs(), key=lambda x: x[0]))
+class MCTSGetPlayPolicy(Policy):
+    def __init__(self, game, mcts_iter=100, tree_policy=UCB1(c=1.41), default_policy=random_terminal_roll_out,
+                              backup=monte_carlo_backpropagate):
+        assert mcts_iter >= 0
+        super().__init__(name="default", atype=ActionType.GET_PLAY, strategy=mcts_get_play)
+        self.mcts_iter = mcts_iter
+        self.tree_policy = tree_policy
+        self.default_policy = default_policy
+        self.backup = backup
+        self.game = game
+        self.game_bak = copy.deepcopy(self.game)
 
-    episodes = kwargs.pop('episodes')
+    def _get_action(self, *args, **kwargs):
+        return self.strategy(mcts_iter=self.mcts_iter, tree_policy=self.tree_policy, default_policy=self.default_policy,
+                             backup=self.backup, game=self.game, game_bak=self.game_bak, *args, **kwargs)
 
-    # initialize logger
-    log_id = kwargs.pop('log_id')
-    mcts_iter = kwargs.get('mcts_iter')
-    assert log_id < 1000
-    filename = 'battle-mcts-{:0>3}-local.log'.format(log_id)
-    logger = logging.Logger("MCTSLogger")
-    sh = logging.StreamHandler()
-    fh = logging.FileHandler(filename)
-    logger.addHandler(sh)
-    logger.addHandler(fh)
 
-    # model_path_wr = 'battle-mcts-{:0>3}-best-wr-local.pkl'.format(log_id)
-    # model_path_ar = 'battle-mcts-{:0>3}-best-ar-local.pkl'.format(log_id)
-
-    # log hyper-parameters
-    logger.info('opponent=greedy')
-    for k, v, in kwargs.items():
-        logger.info('{}={}'.format(k, v))
-
-    # initialize agent
-    state_version = kwargs.pop("state")
-    reward_version = kwargs.pop("reward")
-    env = BattleEnv(state_version=state_version, reward_version=reward_version)
-    state_size = env.state_space_dim
-    action_size = env.action_space_dim
-
-    state, done = env.start_round()
-
-    wins = []
-    rewards = []
-    max_window_wr = -sys.maxsize - 1
-    max_window_ar = -sys.maxsize - 1
-
-    for i in range(episodes):
-        begin = time.time()
-        reward = 0
-
-        while not done:
-            game_copy = copy.deepcopy(env)
-            agent = MCTSAgent(tree_policy=UCB1(c=1.41), default_policy=random_terminal_roll_out,
-                              backup=monte_carlo_backpropagate, game=game_copy)
-            action = agent.get_action(state, n=mcts_iter)
-            # print("action got", action)
-            next_state, reward, done = env.step(action)
-            state = next_state
-
-        win = env.ext_player.num_cards == 0
-        # print("ext_player num_cards: {}; opp_player num_cards: {}".format(env.ext_player.num_cards, env.opp_player.num_cards))
-        wins.append(int(win))
-        rewards.append(env.opp_player.loss if win else -env.ext_player.loss)
-
-        if i >= 100:
-            window_wr = sum(wins[-100:])
-            window_ar = sum(rewards[-100:]) / 100
-        else:
-            window_wr = sum(wins) / (i + 1) * 100
-            window_ar = sum(rewards) / (i + 1)
-
-        msg = "win rate: {}%, avg reward: {}".format(
-            round(window_wr, 2),
-            round(window_ar, 2)
-        )
-
-        if win:
-            msg = "Round {}: win - {}".format(i, msg)
-        else:
-            msg = "Round {}: lose - {} cards left{} - ".format(i, env.ext_player.num_cards, msg)
-
-        if window_wr > max_window_wr:
-            max_window_wr = window_wr
-            # save_pickle(state, model_path_wr)
-            msg += " (best wwr)"
-        if window_ar > max_window_ar:
-            max_window_ar = window_ar
-            # save_pickle(state, model_path_ar)
-            msg += " (best war)"
-
-        logger.info(msg)
-        duration = time.time() - begin
-        print("duration: {}".format(duration))
-
-        if i < episodes - 1:
-            state, done = env.reset()
-
-    env.end_round()
-
-    logger.info("best window win rate: {}\nbest window avg reward: {}".format(
-        round(max_window_wr, 2),
-        round(max_window_ar, 2)
-    ))
