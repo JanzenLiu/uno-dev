@@ -25,7 +25,7 @@ class BattleEnv(Controller):
     reward_versions = {"score_1", "score_1.1", "count_1", "count_1.1", "final_1", "final_1.1", "type_1"}
 
     def __init__(self, state_version="1d_1", reward_version="score_1",
-                 agent_pos=0, opponent_type=PlayerType.PC_GREEDY, stream=False, filename=None):
+                 agent_pos=0, opponent_type=PlayerType.PC_GREEDY, low_dim=False, stream=False, filename=None):
         assert isinstance(state_version, str)
         assert isinstance(reward_version, str)
         assert isinstance(agent_pos, int) and 0 <= agent_pos <= 1
@@ -61,6 +61,7 @@ class BattleEnv(Controller):
 
         # set other attributes
         self.done = False
+        self.low_dim = low_dim
 
     def _init_players(self):
         ap = self.agent_pos  # agent position
@@ -89,8 +90,12 @@ class BattleEnv(Controller):
         playables = ep.get_playable(sc.current_color, sc.current_value, sc.current_type, sc.current_to_draw)
 
         if self.state_version.startswith("1d"):
-            entire_state = np.zeros((1, self.state_space_dim))
-            state = entire_state[0]
+            if self.low_dim:
+                entire_state = np.zeros(self.state_space_dim)
+                state = entire_state
+            else:
+                entire_state = np.zeros((1, self.state_space_dim))
+                state = entire_state[0]
 
             # ================
             # common 1D states
@@ -332,32 +337,59 @@ class BattleEnv(Controller):
         action_name = self.action_map[action]
         playables = ep.get_playable(sc.current_color, sc.current_value, sc.current_type, sc.current_to_draw)
         play = None
-        reward = np.full((self.action_space_dim,), 0)
+        if self.low_dim:
+            reward = 0
+        else:
+            reward = np.full((self.action_space_dim,), 0)
 
         for i, card in playables:
             card_short_name = card.short_name
             card_id = self.action_invmap[card_short_name]
 
             # --- case switching ---
-            if rv == "score_1":
-                reward[card_id] = card.score
-            elif rv == "score_1.1":
-                reward[card_id] = card.score * 0.1
-            elif rv == "count_1":
-                reward[card_id] = 1
-            elif rv == "count_1.1":
-                reward[card_id] = 0.1
-            elif rv == "final_1":
-                reward[card_id] = 0
-            elif rv == "final_1.1":
-                reward[card_id] = 0
-            elif rv == "type_1":
-                if card.is_number():
+            if self.low_dim:
+                if action_name == card_short_name:
+                    play = i, card
+                    if rv == "score_1":
+                        reward += card.score
+                    elif rv == "score_1.1":
+                        reward += card.score * 0.1
+                    elif rv == "count_1":
+                        reward += 1
+                    elif rv == "count_1.1":
+                        reward += 0.1
+                    elif rv == "final_1":
+                        reward += 0
+                    elif rv == "final_1.1":
+                        reward += 0
+                    elif rv == "type_1":
+                        if card.is_number():
+                            reward += 1
+                        elif card.is_weak_action():
+                            reward += 2
+                        else:
+                            reward += 3
+                    break
+            else:
+                if rv == "score_1":
+                    reward[card_id] = card.score
+                elif rv == "score_1.1":
+                    reward[card_id] = card.score * 0.1
+                elif rv == "count_1":
                     reward[card_id] = 1
-                elif card.is_weak_action():
-                    reward[card_id] = 2
-                else:
-                    reward[card_id] = 3
+                elif rv == "count_1.1":
+                    reward[card_id] = 0.1
+                elif rv == "final_1":
+                    reward[card_id] = 0
+                elif rv == "final_1.1":
+                    reward[card_id] = 0
+                elif rv == "type_1":
+                    if card.is_number():
+                        reward[card_id] = 1
+                    elif card.is_weak_action():
+                        reward[card_id] = 2
+                    else:
+                        reward[card_id] = 3
             # ----------------------
 
             if card_id in idx:
@@ -374,40 +406,72 @@ class BattleEnv(Controller):
                 i = self.action_invmap[card.short_name]
 
                 # --- case switching ---
-                if rv == "score_1":
-                    reward[i] += self.opp_player.loss
-                elif rv == "score_1.1":
-                    reward[i] += self.opp_player.loss
-                elif rv == "count_1":
-                    reward[i] += self.opp_player.num_cards
-                elif rv == "count_1.1":
-                    reward[i] += self.opp_player.num_cards
-                elif rv == "final_1":
-                    reward[i] = 10
-                elif rv == "final_1.1":
-                    reward[i] = 10
-                elif rv == "type_1":
-                    reward[i] = 10
+                if self.low_dim:
+                    if rv == "score_1":
+                        reward += self.opp_player.loss
+                    elif rv == "score_1.1":
+                        reward += self.opp_player.loss
+                    elif rv == "count_1":
+                        reward += self.opp_player.num_cards
+                    elif rv == "count_1.1":
+                        reward += self.opp_player.num_cards
+                    elif rv == "final_1":
+                        reward = 10
+                    elif rv == "final_1.1":
+                        reward = 10
+                    elif rv == "type_1":
+                        reward = 10
+                else:
+                    if rv == "score_1":
+                        reward[i] += self.opp_player.loss
+                    elif rv == "score_1.1":
+                        reward[i] += self.opp_player.loss
+                    elif rv == "count_1":
+                        reward[i] += self.opp_player.num_cards
+                    elif rv == "count_1.1":
+                        reward[i] += self.opp_player.num_cards
+                    elif rv == "final_1":
+                        reward[i] = 10
+                    elif rv == "final_1.1":
+                        reward[i] = 10
+                    elif rv == "type_1":
+                        reward[i] = 10
                 # ----------------------
         else:
             drawn_cards = self.apply_penalty(ep)
             done = False
 
             # --- case switching ---
-            if rv == "score_1":
-                reward[idx] = -sum([c.score for c in drawn_cards])
-            elif rv == "score_1.1":
-                reward[idx] = -sum([c.score for c in drawn_cards]) * 0.1
-            elif rv == "count_1":
-                reward[idx] = -len(drawn_cards)
-            elif rv == "count_1.1":
-                reward[idx] = -len(drawn_cards) * 0.1
-            elif rv == "final_1":
-                reward[idx] = 0
-            elif rv == "final_1.1":
-                reward[idx] = 0
-            elif rv == "type_1":
-                reward[idx] = -len(drawn_cards)
+            if self.low_dim:
+                if rv == "score_1":
+                    reward = -sum([c.score for c in drawn_cards])
+                elif rv == "score_1.1":
+                    reward = -sum([c.score for c in drawn_cards]) * 0.1
+                elif rv == "count_1":
+                    reward = -len(drawn_cards)
+                elif rv == "count_1.1":
+                    reward = -len(drawn_cards) * 0.1
+                elif rv == "final_1":
+                    reward = 0
+                elif rv == "final_1.1":
+                    reward = 0
+                elif rv == "type_1":
+                    reward = -len(drawn_cards)
+            else:
+                if rv == "score_1":
+                    reward[idx] = -sum([c.score for c in drawn_cards])
+                elif rv == "score_1.1":
+                    reward[idx] = -sum([c.score for c in drawn_cards]) * 0.1
+                elif rv == "count_1":
+                    reward[idx] = -len(drawn_cards)
+                elif rv == "count_1.1":
+                    reward[idx] = -len(drawn_cards) * 0.1
+                elif rv == "final_1":
+                    reward[idx] = 0
+                elif rv == "final_1.1":
+                    reward[idx] = 0
+                elif rv == "type_1":
+                    reward[idx] = -len(drawn_cards)
             # ----------------------
 
         fc.to_next_player()

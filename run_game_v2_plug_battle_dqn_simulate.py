@@ -70,16 +70,21 @@ def dqn_get_play(model, classmap, playable_cards, **info):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--log_id', '-i', type=int, required=True)
+    parser.add_argument('--best', '-b', default="")
     kwargs = dict(parser.parse_args()._get_kwargs())
     log_id = kwargs.pop('log_id')
-    model_path = 'battle-dqn-{:0>3}-local.h5'.format(log_id)
+    best = kwargs.pop("best")
+    if best == "":
+        model_path = 'battle-dqn-{:0>3}-local.h5'.format(log_id)
+    else:
+        model_path = 'battle-dqn-{:0>3}-best-{}-local.h5'.format(log_id, best)
 
     # =======
     # players
     # =======
     target_player_tup = (
         PlayerType.POLICY,
-        "BATTLE_DQN_{}".format(log_id),
+        "BATTLE_DQN_{}{}".format(log_id, best),
         dict(get_play=KerasPolicy(name="dqn_policy", atype="get_play",
                                   model=model_path,
                                   strategy=dqn_get_play, classmap=action_map))
@@ -89,8 +94,8 @@ if __name__ == "__main__":
     # ===================
     # records preparation
     # ===================
-    out_path = "local_result/BattleDQN{}_10000rounds_{}.csv".format(
-        log_id, datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
+    out_path = "local_result/BattleDQN{}{}_10000rounds_{}.csv".format(
+        log_id, best, datetime.datetime.today().strftime('%Y%m%d%H%M%S'))
     cols = ["player_type", "player_params", "num_players", "pos", "num_wins", "cum_reward"]
     df = pd.DataFrame(columns=cols)  # keep the records
 
