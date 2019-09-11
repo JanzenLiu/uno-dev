@@ -1,4 +1,4 @@
-# UNO Game
+# UNO Master
 
 All version are implemented in Python 3, so note that running them with Python 2 will not work
 
